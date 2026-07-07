@@ -29,11 +29,19 @@ const getDashboard = async (req, res) => {
         // Weak topics (less than 3 problems)
         const weakTopics = topicWiseProblems.filter(t => t.count < 3);
 
+        // User marked revision topics
+        const revisionTopics = await Topic.find({ user: userId, needsRevision: true }).select('name status');
+
+        // User marked revision problems
+        const revisionProblems = await Problem.find({ user: userId, needsRevision: true }).select('name difficulty link').populate('topic', 'name');
+
         res.status(200).json({
             topics: { totalTopics, completedTopics, inProgressTopics, pendingTopics },
             problems: { totalProblems, easyProblems, mediumProblems, hardProblems },
             topicWiseProblems,
-            weakTopics
+            weakTopics,
+            revisionTopics,
+            revisionProblems
         });
 
     } catch (error) {

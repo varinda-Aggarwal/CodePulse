@@ -19,6 +19,10 @@ const topicSchema = new mongoose.Schema({
     completedAt: {
         type: Date,
         default: null
+    },
+    needsRevision: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true

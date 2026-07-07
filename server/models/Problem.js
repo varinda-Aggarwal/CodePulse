@@ -32,6 +32,10 @@ const problemSchema = new mongoose.Schema({
     dateSolved: {
         type: Date,
         default: Date.now
+    },
+    needsRevision: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true
