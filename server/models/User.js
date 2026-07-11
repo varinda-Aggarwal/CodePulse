@@ -16,6 +16,14 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    photo: {
+        type: String,
+        default: null
+    },
+    googleId: {
+        type: String,
+        default: null
     }
 }, {
     timestamps: true
