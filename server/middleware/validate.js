@@ -23,6 +23,39 @@ const validateRegister = [
     handleValidationErrors
 ];
 
+const validateSendOtp = [
+    body('username')
+        .trim()
+        .notEmpty().withMessage('Username is required')
+        .isLength({ min: 3 }).withMessage('Username must be at least 3 characters'),
+    body('email')
+        .trim()
+        .notEmpty().withMessage('Email is required')
+        .isEmail().withMessage('Please enter a valid email')
+        .normalizeEmail(),
+    body('phone')
+        .trim()
+        .notEmpty().withMessage('Phone number is required')
+        .isMobilePhone().withMessage('Please enter a valid phone number'),
+    body('password')
+        .notEmpty().withMessage('Password is required')
+        .isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
+        .matches(/\d/).withMessage('Password must contain at least one number'),
+    handleValidationErrors
+];
+
+const validateVerifyOtp = [
+    body('email')
+        .trim()
+        .notEmpty().withMessage('Email is required')
+        .isEmail().withMessage('Please enter a valid email'),
+    body('otp')
+        .trim()
+        .notEmpty().withMessage('OTP is required')
+        .isLength({ min: 6, max: 6 }).withMessage('OTP must be 6 digits'),
+    handleValidationErrors
+];
+
 const validateLogin = [
     body('email')
         .trim()
@@ -57,4 +90,4 @@ const validateProblem = [
     handleValidationErrors
 ];
 
-module.exports = { validateRegister, validateLogin, validateTopic, validateProblem };
+module.exports = { validateRegister, validateLogin, validateTopic, validateProblem, validateSendOtp, validateVerifyOtp };
