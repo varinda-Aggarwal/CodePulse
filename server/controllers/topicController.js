@@ -3,7 +3,26 @@ const Topic = require('../models/Topic');
 // Get all topics
 const getTopics = async (req, res) => {
     try {
-        const topics = await Topic.find({ user: req.user._id });
+        const { search, sort } = req.query;
+        let query = { user: req.user._id };
+
+        if (search) {
+            query.name = { $regex: search, $options: 'i' };
+        }
+
+        let topicsQuery = Topic.find(query);
+
+        if (sort === 'oldest') {
+            topicsQuery = topicsQuery.sort({ createdAt: 1 });
+        } else if (sort === 'name') {
+            topicsQuery = topicsQuery.sort({ name: 1 });
+        } else if (sort === 'revision') {
+            topicsQuery = topicsQuery.sort({ needsRevision: -1, createdAt: -1 });
+        } else {
+            topicsQuery = topicsQuery.sort({ createdAt: -1 });
+        }
+
+        const topics = await topicsQuery;
         res.status(200).json(topics);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -38,6 +57,13 @@ const updateTopic = async (req, res) => {
 
         if (topic.user.toString() !== req.user._id.toString()) {
             return res.status(401).json({ message: 'Not authorized' });
+        }
+
+        // Auto set completedAt when status is Done
+        if (req.body.status === 'Done') {
+            req.body.completedAt = new Date();
+        } else if (req.body.status && req.body.status !== 'Done') {
+            req.body.completedAt = null;
         }
 
         const updatedTopic = await Topic.findByIdAndUpdate(

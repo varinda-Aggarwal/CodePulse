@@ -1,6 +1,88 @@
 const User = require('../models/User');
+const Otp = require('../models/Otp');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const sendOtpEmail = require('../utils/sendOtpEmail');
+
+// Send OTP for registration
+const sendOtp = async (req, res) => {
+    try {
+        const { username, email, phone, password } = req.body;
+
+        // Check if user already exists
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+            return res.status(400).json({ message: 'User already exists with this email' });
+        }
+
+        // Hash password (store hashed, not plain text, even temporarily)
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Remove any previous OTP for this email
+        await Otp.deleteMany({ email });
+
+        // Save new OTP with temporary signup data
+        await Otp.create({
+            email,
+            otp,
+            username,
+            phone,
+            password: hashedPassword
+        });
+
+        // Send OTP email
+        await sendOtpEmail(email, otp);
+
+        res.status(200).json({ message: 'OTP sent to your email' });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Verify OTP and create actual account
+const verifyOtp = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+
+        const otpRecord = await Otp.findOne({ email, otp });
+        if (!otpRecord) {
+            return res.status(400).json({ message: 'Invalid or expired OTP' });
+        }
+
+        // Create actual user now
+        const user = await User.create({
+            username: otpRecord.username,
+            email: otpRecord.email,
+            phone: otpRecord.phone,
+            password: otpRecord.password
+        });
+
+        // Delete OTP record after successful verification
+        await Otp.deleteOne({ _id: otpRecord._id });
+
+        // Generate token
+        const token = jwt.sign(
+            { id: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: '30d' }
+        );
+
+        res.status(201).json({
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            token
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 // Register
 const registerUser = async (req, res) => {
@@ -79,4 +161,4 @@ const loginUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser };
+module.exports = { registerUser, loginUser, sendOtp, verifyOtp };
