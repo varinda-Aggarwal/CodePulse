@@ -17,6 +17,29 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    firstName: {
+        type: String,
+        default: null,
+        trim: true
+    },
+    lastName: {
+        type: String,
+        default: null,
+        trim: true
+    },
+    phone: {
+        type: String,
+        default: null
+    },
+    dob: {
+        type: Date,
+        default: null
+    },
+    country: {
+        type: String,
+        default: null,
+        trim: true
+    },
     photo: {
         type: String,
         default: null

@@ -29,6 +29,18 @@ const problemSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    approach: {
+        type: String,
+        trim: true
+    },
+    timeComplexity: {
+        type: String,
+        trim: true
+    },
+    spaceComplexity: {
+        type: String,
+        trim: true
+    },
     dateSolved: {
         type: Date,
         default: Date.now
