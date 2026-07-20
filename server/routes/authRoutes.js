@@ -1,12 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser } = require('../controllers/authController');
-const { validateRegister, validateLogin } = require('../middleware/validate');
+const { registerUser, loginUser, sendOtp, verifyOtp, forgotPassword, resetPassword } = require('../controllers/authController');
+const { validateRegister, validateLogin, validateSendOtp, validateVerifyOtp, validateForgotPassword, validateResetPassword } = require('../middleware/validate');
 const passport = require('../config/passport');
 const jwt = require('jsonwebtoken');
 
 router.post('/register', validateRegister, registerUser);
 router.post('/login', validateLogin, loginUser);
+router.post('/send-otp', validateSendOtp, sendOtp);
+router.post('/verify-otp', validateVerifyOtp, verifyOtp);
+router.post('/forgot-password', validateForgotPassword, forgotPassword);
+router.post('/reset-password/:token', validateResetPassword, resetPassword);
 
 // Google OAuth routes
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));

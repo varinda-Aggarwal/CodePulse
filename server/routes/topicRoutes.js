@@ -5,6 +5,6 @@ const { protect } = require('../middleware/authMiddleware');
 const { validateTopic } = require('../middleware/validate');
 
 router.route('/').get(protect, getTopics).post(protect, validateTopic, addTopic);
-router.route('/:id').put(protect, validateTopic, updateTopic).delete(protect, deleteTopic);
+router.route('/:id').put(protect, updateTopic).delete(protect, deleteTopic);
 
 module.exports = router;
