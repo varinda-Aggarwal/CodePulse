@@ -44,6 +44,45 @@ const validateSendOtp = [
     handleValidationErrors
 ];
 
+const validateForgotPassword = [
+    body('email')
+        .trim()
+        .notEmpty().withMessage('Email is required')
+        .isEmail().withMessage('Please enter a valid email'),
+    handleValidationErrors
+];
+
+const validateResetPassword = [
+    body('password')
+        .notEmpty().withMessage('Password is required')
+        .isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
+        .matches(/\d/).withMessage('Password must contain at least one number'),
+    body('confirmPassword')
+        .custom((value, { req }) => value === req.body.password)
+        .withMessage('Passwords do not match'),
+    handleValidationErrors
+];
+
+const validateProfileUpdate = [
+    body('firstName')
+        .optional({ checkFalsy: true })
+        .trim()
+        .isLength({ min: 1 }).withMessage('First name cannot be empty'),
+    body('lastName')
+        .optional({ checkFalsy: true })
+        .trim(),
+    body('phone')
+        .optional({ checkFalsy: true })
+        .matches(/^[6-9]\d{9}$/).withMessage('Please enter a valid 10-digit Indian phone number'),
+    body('dob')
+        .optional({ checkFalsy: true })
+        .isISO8601().withMessage('Please enter a valid date'),
+    body('country')
+        .optional({ checkFalsy: true })
+        .trim(),
+    handleValidationErrors
+];
+
 const validateVerifyOtp = [
     body('email')
         .trim()
@@ -90,4 +129,4 @@ const validateProblem = [
     handleValidationErrors
 ];
 
-module.exports = { validateRegister, validateLogin, validateTopic, validateProblem, validateSendOtp, validateVerifyOtp };
+module.exports = { validateRegister, validateLogin, validateTopic, validateProblem, validateSendOtp, validateVerifyOtp, validateProfileUpdate, validateForgotPassword, validateResetPassword };
