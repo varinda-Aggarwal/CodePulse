@@ -1,8 +1,11 @@
 const User = require('../models/User');
 const Otp = require('../models/Otp');
+const PasswordReset = require('../models/PasswordReset');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const sendOtpEmail = require('../utils/sendOtpEmail');
+const sendResetEmail = require('../utils/sendResetEmail');
 
 // Send OTP for registration
 const sendOtp = async (req, res) => {
@@ -161,4 +164,58 @@ const loginUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser, sendOtp, verifyOtp };
+// Request password reset (works for both: user with password, or Google-only user)
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            // Same message shown either way, so no one can guess which emails are registered
+            return res.status(200).json({ message: 'If that email exists, a reset link has been sent' });
+        }
+
+        // Remove any previous reset token for this email
+        await PasswordReset.deleteMany({ email });
+
+        const token = crypto.randomBytes(32).toString('hex');
+        await PasswordReset.create({ email, token });
+
+        const resetLink = `http://localhost:3000/reset-password/${token}`;
+        await sendResetEmail(email, resetLink);
+
+        res.status(200).json({ message: 'If that email exists, a reset link has been sent' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Reset password using token from email link
+const resetPassword = async (req, res) => {
+    try {
+        const { token } = req.params;
+        const { password } = req.body;
+
+        const resetRecord = await PasswordReset.findOne({ token });
+        if (!resetRecord) {
+            return res.status(400).json({ message: 'Invalid or expired reset link' });
+        }
+
+        const user = await User.findOne({ email: resetRecord.email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(password, salt);
+        await user.save();
+
+        await PasswordReset.deleteOne({ _id: resetRecord._id });
+
+        res.status(200).json({ message: 'Password reset successful. You can now log in.' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { registerUser, loginUser, sendOtp, verifyOtp, forgotPassword, resetPassword };

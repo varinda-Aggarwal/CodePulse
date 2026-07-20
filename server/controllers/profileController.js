@@ -15,11 +15,17 @@ const getProfile = async (req, res) => {
             _id: user._id,
             username: user.username,
             email: user.email,
+            firstName: user.firstName || '',
+            lastName: user.lastName || '',
+            phone: user.phone || null,
+            dob: user.dob || null,
+            country: user.country || '',
             photo: user.photo || null,
             joinedDate: user.createdAt,
             totalProblems,
             totalTopics,
-            completedTopics
+            completedTopics,
+            hasPassword: !!(user.password && !user.googleId)
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -30,7 +36,11 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
-        if (req.body.username) user.username = req.body.username;
+        if (req.body.firstName !== undefined) user.firstName = req.body.firstName;
+        if (req.body.lastName !== undefined) user.lastName = req.body.lastName;
+        if (req.body.phone !== undefined) user.phone = req.body.phone;
+        if (req.body.dob !== undefined) user.dob = req.body.dob || null;
+        if (req.body.country !== undefined) user.country = req.body.country;
         if (req.file) user.photo = req.file.path;
         await user.save();
 
@@ -38,7 +48,13 @@ const updateProfile = async (req, res) => {
             _id: user._id,
             username: user.username,
             email: user.email,
-            photo: user.photo
+            firstName: user.firstName,
+            lastName: user.lastName,
+            phone: user.phone,
+            dob: user.dob,
+            country: user.country,
+            photo: user.photo,
+            hasPassword: !!user.password && !user.googleId
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
