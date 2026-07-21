@@ -66,4 +66,23 @@ const setGoal = async (req, res) => {
     }
 };
 
-module.exports = { getGoal, setGoal };
+// Get goal history for a given month (calendar view)
+const getGoalHistory = async (req, res) => {
+    try {
+        const now = new Date();
+        const month = req.query.month || String(now.getMonth() + 1).padStart(2, '0');
+        const year = req.query.year || now.getFullYear();
+        const prefix = `${year}-${String(month).padStart(2, '0')}`;
+
+        const goals = await Goal.find({
+            user: req.user._id,
+            date: { $regex: `^${prefix}` }
+        }).sort({ date: 1 });
+
+        res.status(200).json(goals);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { getGoal, setGoal, getGoalHistory };
