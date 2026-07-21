@@ -10,6 +10,7 @@ import Problems from './pages/Problems';
 import TopicProblems from './pages/TopicProblems';
 import Profile from './pages/Profile';
 import DailyGoal from './pages/DailyGoal';
+import AIStudyPlan from './pages/AIStudyPlan';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 
@@ -36,6 +37,7 @@ function App() {
                     <Route path="/problems" element={<PrivateRoute><Problems /></PrivateRoute>} />
                     <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
                     <Route path="/goal" element={<PrivateRoute><DailyGoal /></PrivateRoute>} />
+                    <Route path="/study-plan" element={<PrivateRoute><AIStudyPlan /></PrivateRoute>} />
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>
             </Router>
