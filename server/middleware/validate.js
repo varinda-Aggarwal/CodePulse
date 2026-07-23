@@ -39,12 +39,12 @@ const validateSendOtp = [
         .isMobilePhone().withMessage('Please enter a valid phone number'),
     body('password')
         .notEmpty().withMessage('Password is required')
-        .isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
-        .matches(/\d/).withMessage('Password must contain at least one number'),
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/)
+        .withMessage('Password must be at least 8 characters and include an uppercase letter, a lowercase letter, a number, and a special character (@$!%*?&#)'),
     handleValidationErrors
 ];
 
-const validateForgotPassword = [
+const validateVerifyOtp = [
     body('email')
         .trim()
         .notEmpty().withMessage('Email is required')
@@ -55,8 +55,8 @@ const validateForgotPassword = [
 const validateResetPassword = [
     body('password')
         .notEmpty().withMessage('Password is required')
-        .isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
-        .matches(/\d/).withMessage('Password must contain at least one number'),
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/)
+        .withMessage('Password must be at least 8 characters and include an uppercase letter, a lowercase letter, a number, and a special character (@$!%*?&#)'),
     body('confirmPassword')
         .custom((value, { req }) => value === req.body.password)
         .withMessage('Passwords do not match'),
