@@ -17,17 +17,27 @@ const getDashboard = async (req, res) => {
         const mediumProblems = await Problem.countDocuments({ user: userId, difficulty: 'Medium' });
         const hardProblems = await Problem.countDocuments({ user: userId, difficulty: 'Hard' });
 
-        // Topic wise problem count (for bar chart)
+        /// Topic wise problem count (for bar chart) + mastery score (for weak topic detection)
         const topics = await Topic.find({ user: userId });
+        const DIFFICULTY_WEIGHT = { Easy: 1, Medium: 2, Hard: 3 };
+        const MASTERY_THRESHOLD = 7;
+
         const topicWiseProblems = await Promise.all(
             topics.map(async (topic) => {
-                const count = await Problem.countDocuments({ user: userId, topic: topic._id });
-                return { topic: topic.name, count };
+                const problemsInTopic = await Problem.find({ user: userId, topic: topic._id }).select('difficulty');
+                const count = problemsInTopic.length;
+                const masteryScore = problemsInTopic.reduce(
+                    (sum, p) => sum + (DIFFICULTY_WEIGHT[p.difficulty] || 0),
+                    0
+                );
+                return { topic: topic.name, count, masteryScore };
             })
         );
 
-        // Weak topics (less than 3 problems)
-        const weakTopics = topicWiseProblems.filter(t => t.count < 3);
+        // Weak topics: mastery score below threshold (difficulty-weighted, not just raw count)
+        const weakTopics = topicWiseProblems
+            .filter(t => t.masteryScore < MASTERY_THRESHOLD)
+            .map(t => ({ topic: t.topic, masteryScore: t.masteryScore }));
 
         // User marked revision topics
         const revisionTopics = await Topic.find({ user: userId, needsRevision: true }).select('name status');
