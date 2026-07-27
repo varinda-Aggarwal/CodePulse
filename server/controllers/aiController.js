@@ -3,6 +3,30 @@ const StudyPlan = require('../models/StudyPlan');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// Validate the AI-generated study plan structure before trusting/storing it
+const isValidStudyPlan = (data) => {
+    if (!data || typeof data !== 'object') return false;
+    if (!Array.isArray(data.studyPlan) || data.studyPlan.length === 0) return false;
+
+    const validDifficulties = ['Easy', 'Medium', 'Hard'];
+
+    for (const day of data.studyPlan) {
+        if (typeof day.day !== 'number') return false;
+        if (typeof day.topic !== 'string' || !day.topic.trim()) return false;
+        if (!Array.isArray(day.concepts)) return false;
+        if (!Array.isArray(day.problems)) return false;
+
+        for (const p of day.problems) {
+            if (typeof p.name !== 'string' || !p.name.trim()) return false;
+            if (!validDifficulties.includes(p.difficulty)) return false;
+        }
+    }
+
+    if (data.tips && !Array.isArray(data.tips)) return false;
+
+    return true;
+};
+
 const getTodayDateStr = () => new Date().toISOString().split('T')[0];
 
 // Get today's plan if it exists (no AI call)
@@ -129,9 +153,19 @@ const generateStudyPlan = async (req, res) => {
         const text = response.text();
 
         const cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-        const studyPlan = JSON.parse(cleanText);
 
-      // Save/overwrite today's plan, incrementing generation count
+        let studyPlan;
+        try {
+            studyPlan = JSON.parse(cleanText);
+        } catch (parseError) {
+            return res.status(502).json({ message: 'AI returned an invalid response. Please try generating again.' });
+        }
+
+        if (!isValidStudyPlan(studyPlan)) {
+            return res.status(502).json({ message: 'AI response did not match the expected format. Please try generating again.' });
+        }
+
+        // Save/overwrite today's plan, incrementing generation count
         const newCount = existing ? existing.generationCount + 1 : 1;
         await StudyPlan.findOneAndUpdate(
             { user: req.user._id, date: today },
