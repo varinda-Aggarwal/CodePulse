@@ -34,6 +34,16 @@ const addTopic = async (req, res) => {
     try {
         const { name, status } = req.body;
 
+        // Case-insensitive duplicate check for this user
+        const existing = await Topic.findOne({
+            user: req.user._id,
+            name: { $regex: `^${name.trim()}$`, $options: 'i' }
+        });
+
+        if (existing) {
+            return res.status(400).json({ message: `Topic "${name}" already exists` });
+        }
+
         const topic = await Topic.create({
             user: req.user._id,
             name,
@@ -57,6 +67,19 @@ const updateTopic = async (req, res) => {
 
         if (topic.user.toString() !== req.user._id.toString()) {
             return res.status(401).json({ message: 'Not authorized' });
+        }
+
+        // If name is being changed, check it doesn't clash with another topic
+        if (req.body.name) {
+            const existing = await Topic.findOne({
+                _id: { $ne: req.params.id },
+                user: req.user._id,
+                name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' }
+            });
+
+            if (existing) {
+                return res.status(400).json({ message: `Topic "${req.body.name}" already exists` });
+            }
         }
 
         // Auto set completedAt when status is Done
