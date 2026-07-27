@@ -44,6 +44,27 @@ const getProblems = async (req, res) => {
 const addProblem = async (req, res) => {
     try {
         const { name, link, difficulty, topic, notes } = req.body;
+
+        // Check for duplicate name or duplicate link for this user (case-insensitive)
+        const orConditions = [
+            { name: { $regex: `^${name.trim()}$`, $options: 'i' } }
+        ];
+        if (link && link.trim()) {
+            orConditions.push({ link: { $regex: `^${link.trim()}$`, $options: 'i' } });
+        }
+
+        const existing = await Problem.findOne({
+            user: req.user._id,
+            $or: orConditions
+        });
+
+        if (existing) {
+            if (existing.name.toLowerCase() === name.trim().toLowerCase()) {
+                return res.status(400).json({ message: `A problem named "${name}" already exists` });
+            }
+            return res.status(400).json({ message: 'A problem with this link already exists' });
+        }
+
         const problem = await Problem.create({
             user: req.user._id,
             name,
@@ -69,6 +90,33 @@ const updateProblem = async (req, res) => {
         if (problem.user.toString() !== req.user._id.toString()) {
             return res.status(401).json({ message: 'Not authorized' });
         }
+
+        // If name or link is being changed, check it doesn't clash with another problem
+        if (req.body.name || req.body.link) {
+            const nameToCheck = req.body.name !== undefined ? req.body.name : problem.name;
+            const linkToCheck = req.body.link !== undefined ? req.body.link : problem.link;
+
+            const orConditions = [
+                { name: { $regex: `^${nameToCheck.trim()}$`, $options: 'i' } }
+            ];
+            if (linkToCheck && linkToCheck.trim()) {
+                orConditions.push({ link: { $regex: `^${linkToCheck.trim()}$`, $options: 'i' } });
+            }
+
+            const existing = await Problem.findOne({
+                _id: { $ne: req.params.id },
+                user: req.user._id,
+                $or: orConditions
+            });
+
+            if (existing) {
+                if (existing.name.toLowerCase() === nameToCheck.trim().toLowerCase()) {
+                    return res.status(400).json({ message: `A problem named "${nameToCheck}" already exists` });
+                }
+                return res.status(400).json({ message: 'A problem with this link already exists' });
+            }
+        }
+
         const updatedProblem = await Problem.findByIdAndUpdate(
             req.params.id,
             req.body,
