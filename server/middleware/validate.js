@@ -44,14 +44,6 @@ const validateSendOtp = [
     handleValidationErrors
 ];
 
-const validateVerifyOtp = [
-    body('email')
-        .trim()
-        .notEmpty().withMessage('Email is required')
-        .isEmail().withMessage('Please enter a valid email'),
-    handleValidationErrors
-];
-
 const validateResetPassword = [
     body('password')
         .notEmpty().withMessage('Password is required')
@@ -60,6 +52,14 @@ const validateResetPassword = [
     body('confirmPassword')
         .custom((value, { req }) => value === req.body.password)
         .withMessage('Passwords do not match'),
+    handleValidationErrors
+];
+
+const validateForgotPassword = [
+    body('email')
+        .trim()
+        .notEmpty().withMessage('Email is required')
+        .isEmail().withMessage('Please enter a valid email'),
     handleValidationErrors
 ];
 
