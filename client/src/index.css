@@ -1,3 +1,72 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: rgb(var(--color-bg));
+}
+
+body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+:root {
+  --color-bg: 223 228 236;          /* #DFE4EC */
+  --color-card: 255 255 255;        /* #FFFFFF */
+  --color-border: 214 224 229;      /* soft blue-grey border */
+  --color-text: 1 42 74;            /* #012A4A darkest navy */
+  --color-text-muted: 69 123 157;   /* #457B9D */
+  --color-sidebar: 1 42 74;         /* #012A4A */
+
+  --color-brand: 1 79 134;
+  --color-brand-hover: 0 53 102;
+  --color-brand-light: 222 234 240;
+
+  --color-success: 107 155 110;
+  --color-success-light: 232 240 232;
+  --color-success-text: 63 107 66;
+
+  --color-warning: 212 162 76;
+  --color-warning-light: 251 241 222;
+  --color-warning-text: 138 100 35;
+
+  --color-danger: 193 89 79;
+  --color-danger-light: 247 229 227;
+  --color-danger-text: 140 58 50;
+}
+
+.dark {
+  --color-bg: 5 26 43;
+  --color-card: 8 39 62;
+  --color-border: 27 58 79;
+  --color-text: 237 242 244;
+  --color-text-muted: 137 168 189;
+  --color-sidebar: 1 27 51;
+
+  --color-brand: 69 123 157;
+  --color-brand-hover: 92 148 181;
+  --color-brand-light: 20 51 71;
+
+  --color-success: 127 174 130;
+  --color-success-light: 31 46 32;
+  --color-success-text: 183 216 185;
+
+  --color-warning: 224 181 101;
+  --color-warning-light: 51 40 19;
+  --color-warning-text: 240 217 160;
+
+  --color-danger: 209 110 99;
+  --color-danger-light: 58 33 30;
+  --color-danger-text: 232 168 160;
+}
+
+@layer base {
+  body {
+    @apply bg-surface-bg text-text font-sans transition-colors duration-200;
+  }
+}
