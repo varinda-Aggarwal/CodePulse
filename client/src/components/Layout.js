@@ -5,10 +5,12 @@ const Layout = ({ children }) => {
     return (
         <div className="min-h-screen bg-surface-bg transition-colors flex">
             <Sidebar />
-            <main className="flex-1 p-8">
+            <div className="flex-1 flex flex-col min-h-screen">
                 <TopBar />
-                {children}
-            </main>
+                <main className="flex-1 p-8">
+                    {children}
+                </main>
+            </div>
         </div>
     );
 };
