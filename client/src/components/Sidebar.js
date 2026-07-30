@@ -61,7 +61,7 @@ const Sidebar = () => {
                 {!collapsed && (
                     <button
                         onClick={() => setCollapsed(true)}
-                        className="absolute right-4 text-slate-400 hover:text-white transition p-1"
+                        className="absolute right-4 text-slate-400 hover:text-white hover:bg-[#8094B3]/30 rounded-lg transition p-1"
                     >
                         <ChevronsLeft size={18} />
                     </button>
@@ -79,16 +79,16 @@ const Sidebar = () => {
             {/* Profile section - vertical, centered (fixed, no scroll) */}
             <div className="flex flex-col items-center gap-2 pb-5 mb-2 border-b border-white/10 flex-shrink-0 px-3">
                 {user?.photo ? (
-                    <img src={user.photo} alt="Profile" className="h-14 w-14 rounded-full object-cover ring-2 ring-white/20" />
+                    <img src={user.photo} alt="Profile" className="h-16 w-16 rounded-full object-cover ring-2 ring-white/20" />
                 ) : (
-                    <UserCircle size={56} className="text-slate-400" />
+                    <UserCircle size={64} className="text-slate-400" />
                 )}
                 {!collapsed && (
                     <div className="text-center">
                         <p className="text-white text-sm font-semibold truncate max-w-[180px]">
                             {user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user?.username}
                         </p>
-                        <p className="text-slate-400 text-xs truncate max-w-[180px]">{user?.email}</p>
+                        <p className="text-slate-400 text-xs truncate max-w-[180px] opacity-60">{user?.email}</p>
                     </div>
                 )}
             </div>
@@ -109,19 +109,19 @@ const Sidebar = () => {
                             const isActive = label !== 'Home' && location.pathname.startsWith(to);
                             return (
                                 <Link
-                                    key={label}
-                                    to={to}
-                                    title={collapsed ? label : ''}
-                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition text-sm font-medium
-                                        ${collapsed ? 'justify-center' : ''}
-                                        ${isActive
-                                            ? 'bg-brand text-white'
-                                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                                        }`}
-                                >
-                                    <Icon size={18} className="flex-shrink-0" />
-                                    {!collapsed && label}
-                                </Link>
+                            key={label}
+                            to={to}
+                            title={collapsed ? label : ''}
+                            className={`flex items-center gap-3 py-2.5 rounded-xl transition text-sm font-medium border-l-4
+                                ${collapsed ? 'justify-center px-3' : 'px-3'}
+                                ${isActive
+                                    ? 'bg-brand/35 text-white border-brand font-semibold'
+                                    : 'border-transparent text-slate-300 hover:bg-[#8094B3]/30 hover:text-white hover:translate-x-1'
+                                }`}
+                        >
+                            <Icon size={18} className="flex-shrink-0" />
+                            {!collapsed && label}
+                        </Link>
                             );
                         })}
                     </div>
@@ -133,7 +133,7 @@ const Sidebar = () => {
                 <Link
                     to="/help"
                     title={collapsed ? 'Help & Support' : ''}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white transition ${collapsed ? 'justify-center' : ''}`}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-[#8094B3]/30 hover:text-white transition ${collapsed ? 'justify-center' : ''}`}
                 >
                     <HelpCircle size={18} className="flex-shrink-0" />
                     {!collapsed && 'Help & Support'}
