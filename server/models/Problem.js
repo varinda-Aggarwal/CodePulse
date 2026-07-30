@@ -53,4 +53,8 @@ const problemSchema = new mongoose.Schema({
     timestamps: true
 });
 
+problemSchema.index({ user: 1, createdAt: -1 });
+problemSchema.index({ user: 1, topic: 1 });
+problemSchema.index({ user: 1, difficulty: 1 });
+
 module.exports = mongoose.model('Problem', problemSchema);
