@@ -28,4 +28,7 @@ const topicSchema = new mongoose.Schema({
     timestamps: true
 });
 
+topicSchema.index({ user: 1, createdAt: -1 });
+topicSchema.index({ user: 1, name: 1 });
+
 module.exports = mongoose.model('Topic', topicSchema);
