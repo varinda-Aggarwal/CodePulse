@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import API from '../services/api';
 import toast from 'react-hot-toast';
 import Cropper from 'react-easy-crop';
+import { useAuth } from '../context/AuthContext';
 
 const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
@@ -50,6 +51,7 @@ const getCroppedImageFile = (imageSrc, croppedAreaPixels) => {
 };
 
 const Profile = () => {
+    const { updateUser } = useAuth();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [firstName, setFirstName] = useState('');
@@ -155,6 +157,7 @@ const Profile = () => {
             const { data } = await API.put('/profile', formData);
 
             setProfile((prev) => ({ ...prev, ...data }));
+            updateUser({ firstName: data.firstName, lastName: data.lastName, photo: data.photo });
             setPhotoFile(null);
             setPhotoPreview(null);
             setImgError(false);
@@ -170,6 +173,7 @@ const Profile = () => {
         try {
             await API.delete('/profile/photo');
             setProfile((prev) => ({ ...prev, photo: null }));
+            updateUser({ photo: null });
             setImgError(false);
             toast.success('Photo removed!');
         } catch (error) {
