@@ -45,13 +45,21 @@ const getDashboard = async (req, res) => {
         // User marked revision problems
         const revisionProblems = await Problem.find({ user: userId, needsRevision: true }).select('name difficulty link').populate('topic', 'name');
 
+        // "This week" counts (last 7 days)
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const topicsThisWeek = await Topic.countDocuments({ user: userId, createdAt: { $gte: sevenDaysAgo } });
+        const problemsThisWeek = await Problem.countDocuments({ user: userId, createdAt: { $gte: sevenDaysAgo } });
+
         res.status(200).json({
             topics: { totalTopics, completedTopics, inProgressTopics, pendingTopics },
             problems: { totalProblems, easyProblems, mediumProblems, hardProblems },
             topicWiseProblems,
             weakTopics,
             revisionTopics,
-            revisionProblems
+            revisionProblems,
+            topicsThisWeek,
+            problemsThisWeek
         });
 
     } catch (error) {
