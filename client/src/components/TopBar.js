@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { Sun, Moon, Bell } from 'lucide-react';
 
 const pageTitles = {
@@ -14,11 +15,20 @@ const pageTitles = {
 
 const TopBar = () => {
     const { theme, toggleTheme } = useTheme();
+    const { user } = useAuth();
     const location = useLocation();
+
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return 'Good Morning';
+        if (hour < 17) return 'Good Afternoon';
+        return 'Good Evening';
+    };
     const [notifOpen, setNotifOpen] = useState(false);
     const notifRef = useRef(null);
 
     const currentTitle = pageTitles[location.pathname] || 'Overview';
+    const isDashboard = location.pathname === '/dashboard';
     const today = new Date().toLocaleDateString('en-US', {
         weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
     });
@@ -35,10 +45,21 @@ const TopBar = () => {
 
     return (
         <div className="flex justify-between items-center bg-[#D8E3F3] px-8 py-4 border-b border-black/5">
-            {/* Left: page title + date */}
+            {/* Left: greeting on Dashboard, page title + date elsewhere */}
             <div>
-                <p className="text-text font-bold text-lg italic">{currentTitle}</p>
-                <p className="text-text-muted text-xs">{today}</p>
+                {isDashboard ? (
+                    <>
+                        <p className="text-text font-bold text-lg">
+                            👋 {getGreeting()}, {user?.firstName || user?.username}
+                        </p>
+                        <p className="text-text-muted text-xs">Keep solving! Let's make today count.</p>
+                    </>
+                ) : (
+                    <>
+                        <p className="text-text font-bold text-lg italic">{currentTitle}</p>
+                        <p className="text-text-muted text-xs">{today}</p>
+                    </>
+                )}
             </div>
 
             {/* Right: notifications + theme toggle only */}
