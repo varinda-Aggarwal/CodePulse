@@ -24,13 +24,27 @@ const getDashboard = async (req, res) => {
 
         const topicWiseProblems = await Promise.all(
             topics.map(async (topic) => {
-                const problemsInTopic = await Problem.find({ user: userId, topic: topic._id }).select('difficulty');
+                const problemsInTopic = await Problem.find({ user: userId, topic: topic._id }).select('difficulty status dateSolved');
                 const count = problemsInTopic.length;
-                const masteryScore = problemsInTopic.reduce(
+
+                const solvedProblems = problemsInTopic.filter(p => p.status === 'Solved');
+                const solved = solvedProblems.length;
+                const remaining = count - solved;
+
+                const easy = problemsInTopic.filter(p => p.difficulty === 'Easy').length;
+                const medium = problemsInTopic.filter(p => p.difficulty === 'Medium').length;
+                const hard = problemsInTopic.filter(p => p.difficulty === 'Hard').length;
+
+                const solvedDates = solvedProblems.filter(p => p.dateSolved).map(p => new Date(p.dateSolved));
+                const lastSolvedDate = solvedDates.length ? new Date(Math.max(...solvedDates)) : null;
+
+                // Mastery score now only counts actually-solved problems (unsolved shouldn't boost mastery)
+                const masteryScore = solvedProblems.reduce(
                     (sum, p) => sum + (DIFFICULTY_WEIGHT[p.difficulty] || 0),
                     0
                 );
-                return { topic: topic.name, count, masteryScore };
+
+                return { topic: topic.name, count, solved, remaining, easy, medium, hard, lastSolvedDate, masteryScore };
             })
         );
 
