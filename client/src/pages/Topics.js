@@ -40,10 +40,18 @@ const Topics = () => {
             const { data } = await API.get('/dashboard');
             const counts = {};
             (data.topicWiseProblems || []).forEach((t) => {
-                counts[t.topic] = t.count;
+                counts[t.topic] = t;
             });
             setProblemCounts(counts);
         } catch (error) {}
+    };
+
+    const getRelativeSolvedDate = (dateStr) => {
+        if (!dateStr) return 'Not solved yet';
+        const diffDays = Math.floor((new Date() - new Date(dateStr)) / (1000 * 60 * 60 * 24));
+        if (diffDays === 0) return 'Today';
+        if (diffDays === 1) return 'Yesterday';
+        return `${diffDays} days ago`;
     };
 
     const handleSearch = () => {
@@ -134,8 +142,7 @@ const Topics = () => {
             ? topics.filter(t => t.needsRevision)
             : topics.filter(t => t.status === statusFilter);
 
-    const cardClass = "bg-surface-card border border-surface-border rounded-2xl shadow-sm hover:shadow-md transition-all duration-200";
-
+    const cardClass = "bg-surface-card border border-surface-border p-5 rounded-2xl shadow-md hover:shadow-lg hover:border-[#AECDEA] hover:-translate-y-1 transition-all duration-300"; 
     return (
         <div>
             {/* Page Header */}
@@ -175,22 +182,22 @@ const Topics = () => {
                 </div>
             </div>
 
-            {/* Search + Filter */}
-            <div className={`${cardClass} p-4 mb-4 flex flex-col md:flex-row gap-3`}>
-                <div className="flex-1 relative">
+            {/* Search + Add Topic — combined single row */}
+            <div className="bg-surface-card border border-surface-border rounded-2xl p-4 mb-6 flex flex-col xl:flex-row gap-3 items-stretch">
+                <div className="xl:basis-[55%] flex flex-col md:flex-row gap-3 rounded-xl p-2 -m-2 focus-within:bg-brand/5 focus-within:ring-2 focus-within:ring-brand/20 transition">                <div className="flex-1 relative min-w-[160px]">
                     <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
                     <input
                         type="text"
                         placeholder="Search topic..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full bg-surface-bg text-text pl-9 pr-3 py-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand"
+                        className="w-full bg-[#EAECF1] text-text pl-9 pr-3 py-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition"
                     />
                 </div>
                 <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="bg-surface-bg text-text px-3 py-2.5 rounded-lg border border-surface-border"
+                    className="bg-[#EAECF1] text-text px-2 py-2 rounded-lg border border-surface-border text-sm tracking-tight w-28 flex-shrink-0"
                 >
                     <option value="all">All Status</option>
                     <option value="Not Started">Not Started</option>
@@ -201,7 +208,7 @@ const Topics = () => {
                 <select
                     value={sortBy}
                     onChange={(e) => handleSortChange(e.target.value)}
-                    className="bg-surface-bg text-text px-3 py-2.5 rounded-lg border border-surface-border"
+                    className="bg-[#EAECF1] text-text px-2 py-2 rounded-lg border border-surface-border text-sm tracking-tight w-28 flex-shrink-0"
                 >
                     <option value="latest">Latest First</option>
                     <option value="oldest">Oldest First</option>
@@ -210,31 +217,28 @@ const Topics = () => {
                 </select>
                 <button
                     onClick={handleSearch}
-                    className="bg-brand hover:bg-brand-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition"
+                    className="bg-brand hover:bg-brand-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"
                 >
                     Search
                 </button>
-            </div>
+                </div>
 
-            {/* Add Topic */}
-            <div className={`${cardClass} p-4 mb-6`}>
-                <h2 className="text-text font-bold mb-3 flex items-center gap-2">
-                    <Plus size={18} className="text-brand" />
-                    Add New Topic
-                </h2>
-                <form onSubmit={handleAdd} className="flex flex-col md:flex-row gap-3">
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Topic name (e.g. Arrays)"
-                        className="flex-1 bg-surface-bg text-text px-3 py-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand"
-                        required
-                    />
+                <form onSubmit={handleAdd} className="xl:basis-[45%] xl:ml-4 flex flex-col md:flex-row gap-3 min-w-[220px] rounded-xl p-2 -m-2 focus-within:bg-brand/5 focus-within:ring-2 focus-within:ring-brand/20 transition">
+                    <div className="flex-1 relative">
+                        <Plus size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Topic name..."
+                            className="w-full bg-[#EAECF1] text-text pl-9 pr-3 py-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition"
+                            required
+                        />
+                    </div>
                     <select
                         value={status}
                         onChange={(e) => setStatus(e.target.value)}
-                        className="bg-surface-bg text-text px-3 py-2.5 rounded-lg border border-surface-border"
+                        className="bg-[#EAECF1] text-text px-2 py-2 rounded-lg border border-surface-border text-sm tracking-tight w-28 flex-shrink-0"
                     >
                         <option>Not Started</option>
                         <option>In Progress</option>
@@ -242,9 +246,9 @@ const Topics = () => {
                     </select>
                     <button
                         type="submit"
-                        className="bg-brand hover:bg-brand-hover text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition"
+                        className="bg-brand hover:bg-brand-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"
                     >
-                        Add Topic
+                        Add
                     </button>
                 </form>
             </div>
@@ -257,63 +261,61 @@ const Topics = () => {
                     <p className="text-text-muted text-sm mb-4">Start building your roadmap.</p>
                 </div>
             ) : (
-                <div className="flex flex-col gap-3">
-                    {displayedTopics.map((topic) => (
-                        <div key={topic._id} className={`${cardClass} p-5`}>
-                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                                <div className="flex items-center gap-3 flex-1">
-                                    <div className="h-10 w-10 rounded-lg bg-brand/15 flex items-center justify-center flex-shrink-0">
-                                        <FolderOpen size={20} className="text-brand" />
-                                    </div>
-                                    <div className="flex-1">
-                                        {editingId === topic._id ? (
-                                            <div className="flex items-center gap-2">
-                                                <input
-                                                    type="text"
-                                                    value={editName}
-                                                    onChange={(e) => setEditName(e.target.value)}
-                                                    className="bg-surface-bg text-text px-2 py-1 rounded-lg border border-surface-border focus:outline-none focus:border-brand text-sm"
-                                                    autoFocus
-                                                />
-                                                <button onClick={() => saveEdit(topic._id)} className="text-success hover:opacity-70">
-                                                    <Check size={18} />
-                                                </button>
-                                                <button onClick={() => setEditingId(null)} className="text-text-muted hover:opacity-70">
-                                                    <X size={18} />
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <p
-                                                className="text-text font-semibold cursor-pointer hover:underline"
-                                                onClick={() => navigate(`/topics/${topic._id}`)}
-                                            >
-                                                {topic.name}
-                                            </p>
-                                        )}
-                                        <p className="text-text-muted text-xs mt-0.5">
-                                            Created {getRelativeDate(topic.createdAt)}
-                                        </p>
-                                    </div>
-                                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {displayedTopics.map((topic) => {
+                        const s = problemCounts[topic.name] || { count: 0, solved: 0, remaining: 0, easy: 0, medium: 0, hard: 0, lastSolvedDate: null };
+                        const completion = s.count > 0 ? Math.round((s.solved / s.count) * 100) : 0;
 
-                                <div className="flex flex-wrap items-center gap-4 text-sm">
-                                    <div className="flex flex-col items-center">
-                                        <span className="text-text-muted text-xs">Problems</span>
-                                        <span className="text-text font-semibold">{problemCounts[topic.name] || 0}</span>
-                                    </div>
-                                    <div className="flex flex-col items-center">
-                                        <span className="text-text-muted text-xs">Revision</span>
-                                        <span className={`font-semibold ${topic.needsRevision ? 'text-danger' : 'text-text-muted'}`}>
-                                            {topic.needsRevision ? 'Yes' : 'No'}
-                                        </span>
+                        return (
+                            <div key={topic._id} className={`${cardClass} p-6 flex flex-col gap-1`}>
+                                {/* Card Header */}
+                                <div className="flex items-start justify-between mb-4">
+                                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                                        <div className="h-10 w-10 rounded-lg bg-brand/15 flex items-center justify-center flex-shrink-0">
+                                            <FolderOpen size={20} className="text-brand" />
+                                        </div>
+                                        <div className="min-w-0">
+                                            {editingId === topic._id ? (
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="text"
+                                                        value={editName}
+                                                        onChange={(e) => setEditName(e.target.value)}
+                                                        className="bg-[#EAECF1] text-text px-2 py-1 rounded-lg border border-surface-border focus:outline-none focus:border-brand text-sm w-full"
+                                                        autoFocus
+                                                    />
+                                                    <button onClick={() => saveEdit(topic._id)} className="text-success hover:opacity-70 flex-shrink-0">
+                                                        <Check size={18} />
+                                                    </button>
+                                                    <button onClick={() => setEditingId(null)} className="text-text-muted hover:opacity-70 flex-shrink-0">
+                                                        <X size={18} />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <div className="relative group inline-block max-w-full">
+                                                    <p
+                                                        className="text-text font-semibold cursor-pointer hover:underline truncate"
+                                                        onClick={() => navigate(`/topics/${topic._id}`)}
+                                                    >
+                                                        {topic.name}
+                                                    </p>
+                                                    <div className="absolute left-0 top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 whitespace-nowrap bg-[#08273E] text-white text-xs px-2.5 py-1.5 rounded-lg shadow-lg">
+                                                        {topic.name}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <p className="text-text-muted text-xs mt-0.5">
+                                                Created {getRelativeDate(topic.createdAt)}
+                                            </p>
+                                        </div>
                                     </div>
                                     <select
                                         value={topic.status}
                                         onChange={(e) => handleStatusChange(topic._id, e.target.value)}
-                                        className={`px-3 py-1.5 rounded-full text-xs font-semibold border-none
+                                        className={`px-2.5 py-1 rounded-full text-xs font-semibold border-none flex-shrink-0
                                             ${topic.status === 'Done' ? 'bg-success-light text-success-text' :
                                               topic.status === 'In Progress' ? 'bg-warning-light text-warning-text' :
-                                              'bg-surface-bg text-text-muted'}`}
+                                              'bg-[#EAECF1] text-text-muted'}`}
                                     >
                                         <option>Not Started</option>
                                         <option>In Progress</option>
@@ -321,32 +323,66 @@ const Topics = () => {
                                     </select>
                                 </div>
 
-                                <div className="flex items-center gap-2">
+                                {/* Stats */}
+                                <div className="grid grid-cols-2 gap-3 mb-4">
+                                    <div className="bg-[#EAECF1] rounded-lg p-3 flex flex-col items-center text-center">
+                                        <span className="text-text-muted text-[11px]">Problems</span>
+                                        <span className="text-text font-bold text-lg">{s.count}</span>
+                                    </div>
+                                    <div className="bg-[#EAECF1] rounded-lg p-3 flex flex-col items-center text-center">
+                                        <span className="text-text-muted text-[11px]">Remaining</span>
+                                        <span className="text-warning font-bold text-lg">{s.remaining}</span>
+                                    </div>
+                                </div>
+
+                                <div className="mb-4">
+                                    <div className="flex items-center justify-between mb-1.5">
+                                        <span className="text-text-muted text-xs">Completion</span>
+                                        <span className="text-brand text-xs font-semibold">{completion}%</span>
+                                    </div>
+                                    <div className="w-full bg-[#EAECF1] rounded-full h-2 overflow-hidden">
+                                        <div
+                                            className="bg-brand h-full rounded-full transition-all duration-500"
+                                            style={{ width: `${completion}%` }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Footer info */}
+                                <div className="flex items-center justify-between text-xs mb-3 px-1">
+                                    <span className="text-text-muted">Last Solved: <span className="text-text font-medium">{getRelativeSolvedDate(s.lastSolvedDate)}</span></span>
+                                    <span className={`font-medium ${topic.needsRevision ? 'text-danger' : 'text-text-muted'}`}>
+                                        {topic.needsRevision ? 'Needs Revision' : 'No Revision'}
+                                    </span>
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex items-center justify-end gap-2 pt-4 mt-1 border-t border-surface-border">
                                     <button
                                         onClick={() => startEdit(topic)}
                                         title="Edit name"
-                                        className="p-2 rounded-lg text-text-muted hover:text-brand hover:bg-brand/10 transition"
+                                        className="p-2.5 rounded-lg text-text-muted hover:text-brand hover:bg-brand/10 transition"
                                     >
-                                        <Pencil size={16} />
+                                        <Pencil size={18} />
                                     </button>
                                     <button
                                         onClick={() => handleRevision(topic._id, topic.needsRevision)}
                                         title="Toggle revision"
-                                        className={`p-2 rounded-lg transition ${topic.needsRevision ? 'text-warning bg-warning-light' : 'text-text-muted hover:bg-surface-bg'}`}
+                                        className={`p-2.5 rounded-lg transition ${topic.needsRevision ? 'text-warning bg-warning-light' : 'text-text-muted hover:bg-[#EAECF1]'}`}
                                     >
-                                        <RotateCcw size={16} />
+                                        <RotateCcw size={18} />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(topic._id)}
                                         title="Delete"
-                                        className="p-2 rounded-lg text-text-muted hover:text-danger hover:bg-danger-light transition"
+                                        className="p-2.5 rounded-lg text-text-muted hover:text-danger hover:bg-danger-light transition"
                                     >
-                                        <Trash2 size={16} />
+                                        <Trash2 size={18} />
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>
