@@ -271,7 +271,7 @@ const Dashboard = () => {
 
             {/* Weak Topics + Daily Goal Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-                <div className="bg-surface-card border border-surface-border p-5 rounded-2xl shadow-md  hover:shadow-lg  hover:border-[#AECDEA]  hover:shadow-lg  hover:-translate-y-1  transition-all duration-300 hover:-translate-y-0.5 transition-all duration-200">
+                <div className="bg-surface-card border border-surface-border p-5 rounded-2xl shadow-md  hover:shadow-lg  hover:border-[#AECDEA]  hover:shadow-lg  hover:-translate-y-1  transition-all duration-300 hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
                     <h2 className="text-text font-bold mb-4 flex items-center justify-center gap-2">
                         <AlertTriangle size={18} className="text-danger" />
                         Weak Topics
@@ -292,8 +292,8 @@ const Dashboard = () => {
                         <p className="text-text-muted text-xs">No weak topics right now — nice work!</p>
                     )}
                 </div>
-
-                <div className="bg-surface-card border border-surface-border p-5 rounded-2xl shadow-md  hover:shadow-lg  hover:border-[#AECDEA]  hover:shadow-lg  hover:-translate-y-1  transition-all duration-300 hover:-translate-y-0.5 transition-all duration-200">
+                <div className="bg-surface-card border border-surface-border p-5 rounded-2xl shadow-md overflow-hidden hover:shadow-lg  hover:border-[#AECDEA]  hover:shadow-lg  hover:-translate-y-1  transition-all duration-300 hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
+                
                     <h2 className="text-text font-bold mb-4 flex items-center justify-center gap-2">
                         <Target size={18} className="text-brand" />
                         Daily Goal
@@ -323,16 +323,39 @@ const Dashboard = () => {
             )}
 
                     {/* Last 7 Days trend */}
-                    <div className="mt-5 pt-4 border-t border-surface-border">
+                    <div className="mt-5 pt-4 border-t border-surface-border overflow-hidden" style={{ minHeight: 220 }}>
                         <p className="text-text-muted text-xs font-semibold uppercase tracking-wide mb-2">Last 7 Days</p>
-                        <ResponsiveContainer width="100%" height={160}>
+                        <div style={{ width: '100%', height: 160 }}>
+                        <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={goalHistory} barGap={2}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#8A8580" opacity={0.2} vertical={false} />
                                 <XAxis dataKey="day" stroke="#8A8580" fontSize={12} />
                                 <YAxis allowDecimals={false} stroke="#8A8580" fontSize={12} />
                                 <Tooltip
                                     cursor={{ fill: '#F5F8FC' }}
-                                    contentStyle={{ backgroundColor: '#08273E', border: 'none', borderRadius: '8px', color: '#EDF2F4', fontSize: 13 }}
+                                    content={({ active, payload, label }) => {
+                                        if (!active || !payload || !payload.length) return null;
+                                        const achieved = payload.find(p => p.dataKey === 'achieved')?.value ?? 0;
+                                        const target = payload.find(p => p.dataKey === 'target')?.value ?? 0;
+                                        return (
+                                            <div style={{
+                                                backgroundColor: '#08273E',
+                                                borderRadius: '8px',
+                                                padding: '10px 14px',
+                                            }}>
+                                                <p style={{ color: '#FFFFFF', fontWeight: 600, fontSize: 14, margin: 0 }}>
+                                                    {label}
+                                                </p>
+                                                <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.15)', margin: '6px 0' }} />
+                                                <p style={{ color: '#F5F8FC', fontSize: 13, margin: 0 }}>
+                                                    Achieved : {achieved}
+                                                </p>
+                                                <p style={{ color: '#9FB3C8', fontSize: 13, margin: 0 }}>
+                                                    Target : {target}
+                                                </p>
+                                            </div>
+                                        );
+                                    }}
                                 />
                                 <Legend wrapperStyle={{ fontSize: 12 }} />
                                 <Bar dataKey="target" name="Target" fill="#367096" radius={[4, 4, 0, 0]} />
@@ -343,6 +366,7 @@ const Dashboard = () => {
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>
+                        </div>
                     </div>
                 </div>
             </div>
