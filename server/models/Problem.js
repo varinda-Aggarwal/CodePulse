@@ -25,6 +25,11 @@ const problemSchema = new mongoose.Schema({
         enum: ['Easy', 'Medium', 'Hard'],
         required: true
     },
+    status: {
+        type: String,
+        enum: ['Solved', 'In Progress', 'To Do'],
+        default: 'Solved'
+    },
     notes: {
         type: String,
         trim: true
@@ -43,7 +48,7 @@ const problemSchema = new mongoose.Schema({
     },
     dateSolved: {
         type: Date,
-        default: Date.now
+        default: null
     },
     needsRevision: {
         type: Boolean,
