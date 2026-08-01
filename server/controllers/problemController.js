@@ -65,13 +65,16 @@ const addProblem = async (req, res) => {
             return res.status(400).json({ message: 'A problem with this link already exists' });
         }
 
+        const { status } = req.body;
         const problem = await Problem.create({
             user: req.user._id,
             name,
             link,
             difficulty,
             topic,
-            notes
+            notes,
+            status: status || 'Solved',
+            dateSolved: (status || 'Solved') === 'Solved' ? new Date() : null
         });
 
         res.status(201).json(problem);
@@ -115,6 +118,13 @@ const updateProblem = async (req, res) => {
                 }
                 return res.status(400).json({ message: 'A problem with this link already exists' });
             }
+        }
+
+        // Auto-manage dateSolved when status changes
+        if (req.body.status === 'Solved' && problem.status !== 'Solved') {
+            req.body.dateSolved = new Date();
+        } else if (req.body.status && req.body.status !== 'Solved') {
+            req.body.dateSolved = null;
         }
 
         const updatedProblem = await Problem.findByIdAndUpdate(
