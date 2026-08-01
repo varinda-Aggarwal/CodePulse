@@ -21,7 +21,7 @@ const Problems = () => {
     const [totalProblems, setTotalProblems] = useState(0);
     const [formData, setFormData] = useState({
         name: '', link: '', difficulty: 'Easy', topic: '', notes: '',
-        timeComplexity: '', spaceComplexity: '', approach: ''
+        timeComplexity: '', spaceComplexity: '', approach: '', status: 'Solved'
     });
 
     useEffect(() => {
@@ -65,14 +65,14 @@ const Problems = () => {
                 toast.success('Problem updated!');
                 setEditProblem(null);
                 setIsEditing(false);
-                setFormData({ name: '', link: '', difficulty: 'Easy', topic: '', notes: '', timeComplexity: '', spaceComplexity: '', approach: '' });
+                setFormData({ name: '', link: '', difficulty: 'Easy', topic: '', notes: '', timeComplexity: '', spaceComplexity: '', approach: '', status: 'Solved' });
                 return;
             } else {
                 const { data } = await API.post('/problems', formData);
                 setProblems([data, ...problems]);
                 toast.success('Problem added!');
             }
-            setFormData({ name: '', link: '', difficulty: 'Easy', topic: '', notes: '', timeComplexity: '', spaceComplexity: '', approach: '' });
+            setFormData({ name: '', link: '', difficulty: 'Easy', topic: '', notes: '', timeComplexity: '', spaceComplexity: '', approach: '', status: 'Solved' });
             setShowForm(false);
         } catch (error) {
             toast.error(error.response?.data?.message || 'Failed');
@@ -88,7 +88,8 @@ const Problems = () => {
                 notes: problem.notes || '',
                 timeComplexity: problem.timeComplexity || '',
                 spaceComplexity: problem.spaceComplexity || '',
-                approach: problem.approach || ''
+                approach: problem.approach || '',
+                status: problem.status || 'Solved'
             });
             setIsEditing(true);
         };
@@ -118,7 +119,7 @@ const Problems = () => {
         setShowForm(false);
         setIsEditing(false);
         setEditProblem(null);
-        setFormData({ name: '', link: '', difficulty: 'Easy', topic: '', notes: '', timeComplexity: '', spaceComplexity: '', approach: '' });
+        setFormData({ name: '', link: '', difficulty: 'Easy', topic: '', notes: '', timeComplexity: '', spaceComplexity: '', approach: '', status: 'Solved' });
     };
 
     const goToPage = (pageNum) => {
@@ -168,6 +169,11 @@ const Problems = () => {
                                         <option>Easy</option>
                                         <option>Medium</option>
                                         <option>Hard</option>
+                                    </select>
+                                    <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} className="bg-gray-700 text-white p-3 rounded-lg flex-1">
+                                        <option>Solved</option>
+                                        <option>In Progress</option>
+                                        <option>To Do</option>
                                     </select>
                                     <select value={formData.topic} onChange={(e) => setFormData({ ...formData, topic: e.target.value })} className="bg-gray-700 text-white p-3 rounded-lg flex-1" required>
                                         <option value="">Select Topic *</option>
@@ -268,6 +274,11 @@ const Problems = () => {
                                         <option>Easy</option>
                                         <option>Medium</option>
                                         <option>Hard</option>
+                                    </select>
+                                    <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} className="bg-gray-700 text-white p-3 rounded-lg flex-1">
+                                        <option>Solved</option>
+                                        <option>In Progress</option>
+                                        <option>To Do</option>
                                     </select>
                                     <select value={formData.topic} onChange={(e) => setFormData({ ...formData, topic: e.target.value })} className="bg-gray-700 text-white p-3 rounded-lg flex-1" required>
                                         <option value="">Select Topic *</option>
