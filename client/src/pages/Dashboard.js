@@ -88,8 +88,13 @@ const Dashboard = () => {
 
     const fetchRecentProblems = async () => {
         try {
-            const { data } = await API.get('/problems?sort=newest&limit=7');
-            setRecentProblems(data.problems || []);
+            const { data } = await API.get('/problems?limit=100');
+            const sorted = [...(data.problems || [])].sort((a, b) => {
+                const dateA = new Date(a.dateSolved || a.createdAt);
+                const dateB = new Date(b.dateSolved || b.createdAt);
+                return dateB - dateA;
+            });
+            setRecentProblems(sorted.slice(0, 7));
         } catch (error) {}
     };
 
@@ -390,7 +395,9 @@ const Dashboard = () => {
                     {p.difficulty}
                 </span>
                 <span className="justify-self-end text-xs text-text-muted">
-                    {getRelativeDate(p.dateSolved)}
+                    {p.dateSolved
+                        ? getRelativeDate(p.dateSolved)
+                        : p.status === 'In Progress' ? 'In Progress' : `${getRelativeDate(p.createdAt)}`}
                 </span>
                     </div>
                 ))}
