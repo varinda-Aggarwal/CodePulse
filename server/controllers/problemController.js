@@ -21,9 +21,9 @@ const getProblems = async (req, res) => {
             .skip(skip)
             .limit(parseInt(limit));
         if (sort === 'oldest') {
-            problemsQuery = problemsQuery.sort({ dateSolved: 1 });
+            problemsQuery = problemsQuery.sort({ createdAt: 1 });
         } else {
-            problemsQuery = problemsQuery.sort({ dateSolved: -1 });
+            problemsQuery = problemsQuery.sort({ createdAt: -1 });
         }
         const problems = await problemsQuery;
         const total = await Problem.countDocuments(query);
