@@ -126,7 +126,12 @@ const Topics = () => {
     };
 
     const getRelativeDate = (dateStr) => {
-        const diffDays = Math.floor((new Date() - new Date(dateStr)) / (1000 * 60 * 60 * 24));
+        const date = new Date(dateStr);
+        const today = new Date();
+        const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const diffDays = Math.round((todayOnly - dateOnly) / (1000 * 60 * 60 * 24));
+
         if (diffDays === 0) return 'Today';
         if (diffDays === 1) return 'Yesterday';
         if (diffDays < 7) return `${diffDays} days ago`;
@@ -183,7 +188,7 @@ const Topics = () => {
             </div>
 
             {/* Search + Add Topic — combined single row */}
-            <div className="bg-surface-card border border-surface-border rounded-2xl p-4 mb-6 flex flex-col xl:flex-row gap-3 items-stretch">
+            <div className="bg-surface-card border border-surface-border rounded-2xl p-3 mb-6 flex flex-col xl:flex-row gap-2 items-stretch">
                 <div className="xl:basis-[55%] flex flex-col md:flex-row gap-3 rounded-xl p-2 -m-2 focus-within:bg-brand/5 focus-within:ring-2 focus-within:ring-brand/20 transition">                <div className="flex-1 relative min-w-[160px]">
                     <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
                     <input
