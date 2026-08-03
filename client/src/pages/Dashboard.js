@@ -387,7 +387,14 @@ const Dashboard = () => {
                     {recentProblems.map((p) => (
                         <div key={p._id} className="grid grid-cols-3 items-center py-3 text-sm"
                     >
-                    <span className="font-medium text-text"> {p.name} </span>
+                    <span className="font-medium text-text flex items-center gap-2">
+                        {p.name}
+                        {p.needsRevision && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-warning-light text-warning-text">
+                                Revision
+                            </span>
+                        )}
+                    </span>
                     <span className={`justify-self-center px-3 py-1 rounded-full text-xs font-semibold 
                     ${p.difficulty === 'Easy' ? 'bg-green-100 text-green-700' : p.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
                 }`}
