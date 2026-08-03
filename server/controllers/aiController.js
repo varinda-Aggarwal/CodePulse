@@ -45,6 +45,7 @@ const getTodayPlan = async (req, res) => {
             weakTopics: existing.weakTopics,
             totalDays: existing.totalDays,
             generationCount: existing.generationCount,
+            completedTasks: existing.completedTasks || [],
             ...existing.planData
         });
     } catch (error) {
@@ -66,6 +67,7 @@ const getPlanByDate = async (req, res) => {
             date: plan.date,
             weakTopics: plan.weakTopics,
             totalDays: plan.totalDays,
+            completedTasks: plan.completedTasks || [],
             ...plan.planData
         });
     } catch (error) {
@@ -105,6 +107,7 @@ const generateStudyPlan = async (req, res) => {
                 weakTopics: existing.weakTopics,
                 totalDays: existing.totalDays,
                 generationCount: existing.generationCount,
+                completedTasks: existing.completedTasks || [],
                 ...existing.planData
             });
         }
@@ -165,15 +168,16 @@ const generateStudyPlan = async (req, res) => {
             return res.status(502).json({ message: 'AI response did not match the expected format. Please try generating again.' });
         }
 
-        // Save/overwrite today's plan, incrementing generation count
+        
+        // Regenerate/first-time = naya plan structure hai, isliye completedTasks reset ho jayega
         const newCount = existing ? existing.generationCount + 1 : 1;
         await StudyPlan.findOneAndUpdate(
             { user: req.user._id, date: today },
-            { user: req.user._id, date: today, weakTopics, totalDays, planData: studyPlan, generationCount: newCount },
+            { user: req.user._id, date: today, weakTopics, totalDays, planData: studyPlan, generationCount: newCount, completedTasks: [] },
             { upsert: true, new: true }
         );
 
-        res.status(200).json({ fromCache: false, date: today, weakTopics, totalDays, generationCount: newCount, ...studyPlan });
+        res.status(200).json({ fromCache: false, date: today, weakTopics, totalDays, generationCount: newCount, completedTasks: [], ...studyPlan });
 
     } catch (error) {
         if (error.message && error.message.includes('quota')) {
@@ -183,4 +187,29 @@ const generateStudyPlan = async (req, res) => {
     }
 };
 
-module.exports = { generateStudyPlan, getTodayPlan, getPlanHistory, getPlanByDate };
+// Save which checklist items are ticked, for a given date's plan
+const updateProgress = async (req, res) => {
+    try {
+        const { date, completedTasks } = req.body;
+
+        if (!date || !Array.isArray(completedTasks)) {
+            return res.status(400).json({ message: 'date and completedTasks (array) are required' });
+        }
+
+        const updated = await StudyPlan.findOneAndUpdate(
+            { user: req.user._id, date },
+            { completedTasks },
+            { new: true }
+        );
+
+        if (!updated) {
+            return res.status(404).json({ message: 'No plan found for this date' });
+        }
+
+        res.status(200).json({ completedTasks: updated.completedTasks });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { generateStudyPlan, getTodayPlan, getPlanHistory, getPlanByDate, updateProgress };
