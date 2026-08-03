@@ -97,16 +97,16 @@ const Problems = () => {
         try {
             if (editProblem) {
                 const { data } = await API.put(`/problems/${editProblem._id}`, formData);
-                setProblems(problems.map(p => p._id === editProblem._id ? data : p));
                 if (selectedProblem?._id === editProblem._id) setSelectedProblem(data);
                 toast.success('Problem updated!');
+                closeModal();
+                fetchProblems({ search, difficulty: filterDifficulty, sort: sortBy, page: currentPage });
             } else {
-                const { data } = await API.post('/problems', formData);
-                setProblems([data, ...problems]);
-                setTotalProblems(prev => prev + 1);
+                await API.post('/problems', formData);
                 toast.success('Problem added!');
+                closeModal();
+                fetchProblems({ search, difficulty: filterDifficulty, sort: sortBy, page: 1 });
             }
-            closeModal();
         } catch (error) {
             toast.error(error.response?.data?.message || 'Failed');
         }
@@ -348,7 +348,9 @@ const Problems = () => {
                         >
                             <div className="flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                                    {problem.status === 'Solved' ? (
+                                    {problem.needsRevision ? (
+                                        <CheckCircle2 size={28} className="text-warning flex-shrink-0" />
+                                    ) : problem.status === 'Solved' ? (
                                         <CheckCircle2 size={28} className="text-success flex-shrink-0" />
                                     ) : (
                                         <CheckCircle2 size={28} className="text-text-muted/60 flex-shrink-0" />
