@@ -352,7 +352,9 @@ const TopicProblems = () => {
                             className={`${cardClass} p-3 cursor-pointer flex items-center justify-between gap-4`}
                         >
                             <div className="flex items-center gap-3 flex-1 min-w-0">
-                               {problem.status === 'Solved' ? (
+                               {problem.needsRevision ? (
+                                    <CheckCircle2 size={26} className="text-warning flex-shrink-0" />
+                                ) : problem.status === 'Solved' ? (
                                     <CheckCircle2 size={26} className="text-success flex-shrink-0" />
                                 ) : (
                                     <CheckCircle2 size={26} className="text-text-muted/60 flex-shrink-0" />
