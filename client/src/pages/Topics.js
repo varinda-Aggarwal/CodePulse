@@ -9,6 +9,7 @@ import {
 
 const Topics = () => {
     const navigate = useNavigate();
+    const [allTopics, setAllTopics] = useState([]);
     const [topics, setTopics] = useState([]);
     const [problemCounts, setProblemCounts] = useState({});
     const [name, setName] = useState('');
@@ -29,6 +30,10 @@ const Topics = () => {
         try {
             const { data } = await API.get('/topics', { params });
             setTopics(data);
+            // Only refresh the "all topics" stats source when there's no active filter/search
+            if (!params.search && (!params.sort || params.sort === 'latest')) {
+                setAllTopics(data);
+            }
         } catch (error) {
             toast.error('Failed to load topics');
         }
@@ -165,25 +170,25 @@ const Topics = () => {
                     <div className="flex items-center gap-1.5 text-text-muted text-sm font-semibold">
                         <BookOpen size={16} /> Total Topics
                     </div>
-                    <p className="text-text text-3xl font-bold">{topics.length}</p>
+                    <p className="text-text text-3xl font-bold">{allTopics.length}</p>
                 </div>
                 <div className={`${cardClass} p-5 flex flex-col items-center justify-center text-center gap-2 min-h-[110px]`}>
                     <div className="flex items-center gap-1.5 text-success text-sm font-semibold">
                         <CheckCircle2 size={16} /> Completed
                     </div>
-                    <p className="text-success text-3xl font-bold">{topics.filter(t => t.status === 'Done').length}</p>
+                    <p className="text-success text-3xl font-bold">{allTopics.filter(t => t.status === 'Done').length}</p>
                 </div>
                 <div className={`${cardClass} p-5 flex flex-col items-center justify-center text-center gap-2 min-h-[110px]`}>
                     <div className="flex items-center gap-1.5 text-warning text-sm font-semibold">
                         <Clock size={16} /> In Progress
                     </div>
-                    <p className="text-warning text-3xl font-bold">{topics.filter(t => t.status === 'In Progress').length}</p>
+                    <p className="text-warning text-3xl font-bold">{allTopics.filter(t => t.status === 'In Progress').length}</p>
                 </div>
                 <div className={`${cardClass} p-5 flex flex-col items-center justify-center text-center gap-2 min-h-[110px]`}>
                     <div className="flex items-center gap-1.5 text-danger text-sm font-semibold">
                         <RotateCcw size={16} /> Revision
                     </div>
-                    <p className="text-danger text-3xl font-bold">{topics.filter(t => t.needsRevision).length}</p>
+                    <p className="text-danger text-3xl font-bold">{allTopics.filter(t => t.needsRevision).length}</p>
                 </div>
             </div>
 
