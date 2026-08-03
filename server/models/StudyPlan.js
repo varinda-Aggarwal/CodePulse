@@ -19,6 +19,10 @@ const studyPlanSchema = new mongoose.Schema({
     generationCount: {
         type: Number,
         default: 1
+    },
+    completedTasks: {
+        type: [String],
+        default: []
     }
 }, {
     timestamps: true
