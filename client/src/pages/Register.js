@@ -3,16 +3,30 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
 import toast from 'react-hot-toast';
+import { Eye, EyeOff, Check, X } from 'lucide-react';
+import AuthLayout from './AuthLayout';
 
 const Register = () => {
     const [step, setStep] = useState('form'); // 'form' | 'otp'
     const [formData, setFormData] = useState({
         username: '', email: '', phone: '', password: '', confirmPassword: ''
     });
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [passwordFocused, setPasswordFocused] = useState(false);
     const [otp, setOtp] = useState('');
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
+
+    const inputClass = "w-full bg-surface-bg text-text p-2.5 rounded-xl border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition text-base";
+
+    // Matches backend's validateSendOtp rule: min 6 chars + at least one number
+    const passwordChecks = {
+        length: formData.password.length >= 6,
+        hasNumber: /\d/.test(formData.password)
+    };
+    const isPasswordValid = passwordChecks.length && passwordChecks.hasNumber;
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,12 +34,14 @@ const Register = () => {
 
     const handleSendOtp = async (e) => {
         e.preventDefault();
-
+        if (!isPasswordValid) {
+            toast.error('Password must be at least 6 characters and include a number');
+            return;
+        }
         if (formData.password !== formData.confirmPassword) {
             toast.error('Passwords do not match');
             return;
         }
-
         setLoading(true);
         try {
             await API.post('/auth/send-otp', {
@@ -47,10 +63,7 @@ const Register = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const { data } = await API.post('/auth/verify-otp', {
-                email: formData.email,
-                otp
-            });
+            const { data } = await API.post('/auth/verify-otp', { email: formData.email, otp });
             login(data, data.token);
             toast.success('Account created!');
             navigate('/dashboard');
@@ -78,130 +91,171 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-            <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-                <h2 className="text-2xl font-bold text-white text-center mb-6">Create Account</h2>
+        <AuthLayout>
+            <h2 className="text-3xl font-bold text-text mb-0.5">Create Your Account</h2>
+            <p className="text-text-muted text-sm mb-6">Start tracking your DSA journey today.</p>
 
-                {step === 'form' ? (
-                    <form onSubmit={handleSendOtp}>
-                        <div className="mb-4">
-                            <label className="block text-gray-400 mb-2">Username</label>
+            {step === 'form' ? (
+                <form onSubmit={handleSendOtp}>
+                    <div className="mb-3">
+                        <label className="block text-text-muted text-sm mb-1">Username</label>
+                        <input
+                            type="text"
+                            name="username"
+                            value={formData.username}
+                            onChange={handleChange}
+                            className={inputClass}
+                            placeholder="Enter your username"
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="block text-text-muted text-sm mb-1">Email</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className={inputClass}
+                            placeholder="you@example.com"
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="block text-text-muted text-sm mb-1">Phone Number</label>
+                        <input
+                            type="tel"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            className={inputClass}
+                            placeholder="10-digit mobile number"
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-3 relative">
+                        <label className="block text-text-muted text-sm mb-1">Password</label>
+                        <div className="relative">
                             <input
-                                type="text"
-                                name="username"
-                                value={formData.username}
-                                onChange={handleChange}
-                                className="w-full bg-gray-700 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Enter your username"
-                                required
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-400 mb-2">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                className="w-full bg-gray-700 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Enter your email"
-                                required
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-400 mb-2">Phone Number</label>
-                            <input
-                                type="tel"
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleChange}
-                                className="w-full bg-gray-700 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Enter your phone number"
-                                required
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-400 mb-2">Password</label>
-                            <input
-                                type="password"
+                                type={showPassword ? 'text' : 'password'}
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
-                                className="w-full bg-gray-700 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special (@$!%*?&#)"
+                                onFocus={() => setPasswordFocused(true)}
+                                onBlur={() => setPasswordFocused(false)}
+                                className={`${inputClass} pr-10`}
+                                placeholder="Create a password"
                                 required
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword((s) => !s)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
+                            >
+                                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </button>
                         </div>
-                        <div className="mb-6">
-                            <label className="block text-gray-400 mb-2">Confirm Password</label>
+
+                        {/* Live password requirement tooltip */}
+                        {passwordFocused && (
+                            <div className="absolute z-20 left-0 right-0 top-full mt-1 bg-surface-card border border-surface-border rounded-lg shadow-lg p-3">
+                                <p className="text-text-muted text-[11px] font-semibold uppercase tracking-wide mb-1.5">Password must have</p>
+                                <div className="space-y-1">
+                                    <div className={`flex items-center gap-1.5 text-sm ${passwordChecks.length ? 'text-success' : 'text-text-muted'}`}>
+                                        {passwordChecks.length ? <Check size={13} /> : <X size={13} />}
+                                        At least 6 characters
+                                    </div>
+                                    <div className={`flex items-center gap-1.5 text-sm ${passwordChecks.hasNumber ? 'text-success' : 'text-text-muted'}`}>
+                                        {passwordChecks.hasNumber ? <Check size={13} /> : <X size={13} />}
+                                        At least one number
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-text-muted text-sm mb-1">Confirm Password</label>
+                        <div className="relative">
                             <input
-                                type="password"
+                                type={showConfirmPassword ? 'text' : 'password'}
                                 name="confirmPassword"
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
-                                className="w-full bg-gray-700 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className={`${inputClass} pr-10`}
                                 placeholder="Re-enter your password"
                                 required
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword((s) => !s)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
+                            >
+                                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </button>
                         </div>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-200"
-                        >
-                            {loading ? 'Sending OTP...' : 'Send OTP'}
-                        </button>
-                    </form>
-                ) : (
-                    <form onSubmit={handleVerifyOtp}>
-                        <p className="text-gray-400 text-center mb-4">
-                            We've sent a 6-digit OTP to <span className="text-white">{formData.email}</span>
-                        </p>
-                        <div className="mb-6">
-                            <label className="block text-gray-400 mb-2">Enter OTP</label>
-                            <input
-                                type="text"
-                                value={otp}
-                                onChange={(e) => setOtp(e.target.value)}
-                                maxLength={6}
-                                className="w-full bg-gray-700 text-white p-3 rounded-lg text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="------"
-                                required
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-200 mb-3"
-                        >
-                            {loading ? 'Verifying...' : 'Verify & Create Account'}
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleResendOtp}
-                            disabled={loading}
-                            className="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg transition duration-200 mb-3"
-                        >
-                            Resend OTP
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setStep('form')}
-                            className="w-full text-gray-400 hover:text-white text-sm"
-                        >
-                            ← Back to edit details
-                        </button>
-                    </form>
-                )}
+                    </div>
 
-                {step === 'form' && (
-                    <p className="text-gray-400 text-center mt-4">
-                        Already have an account?{' '}
-                        <Link to="/login" className="text-blue-400 hover:underline">Login</Link>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-brand hover:bg-brand-hover disabled:opacity-60 text-white font-semibold py-2.5 rounded-lg transition text-sm"
+                    >
+                        {loading ? 'Sending OTP...' : 'Create Account'}
+                    </button>
+                </form>
+            ) : (
+                <form onSubmit={handleVerifyOtp}>
+                    <p className="text-text-muted text-center text-sm mb-3">
+                        We've sent a 6-digit OTP to <span className="text-text font-medium">{formData.email}</span>
                     </p>
-                )}
-            </div>
-        </div>
+                    <div className="mb-4">
+                        <label className="block text-text-muted text-sm mb-1">Enter OTP</label>
+                        <input
+                            type="text"
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value)}
+                            maxLength={6}
+                            className={`${inputClass} text-center text-xl tracking-widest`}
+                            placeholder="------"
+                            required
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-brand hover:bg-brand-hover disabled:opacity-60 text-white font-semibold py-2.5 rounded-lg transition text-sm mb-2"
+                    >
+                        {loading ? 'Verifying...' : 'Verify & Create Account'}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleResendOtp}
+                        disabled={loading}
+                        className="w-full bg-surface-bg hover:bg-surface-border border border-surface-border text-text py-2.5 rounded-lg transition text-sm mb-2"
+                    >
+                        Resend OTP
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setStep('form')}
+                        className="w-full text-text-muted hover:text-text text-sm"
+                    >
+                        ← Back to edit details
+                    </button>
+                </form>
+            )}
+
+            {step === 'form' && (
+                <p className="text-text-muted text-center text-sm mt-3">
+                    Already have an account?{' '}
+                    <Link to="/login" className="text-brand hover:underline font-semibold">Sign In</Link>
+                </p>
+            )}
+        </AuthLayout>
     );
 };
 
