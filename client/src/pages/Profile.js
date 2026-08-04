@@ -1,9 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
-import Navbar from '../components/Navbar';
 import API from '../services/api';
 import toast from 'react-hot-toast';
 import Cropper from 'react-easy-crop';
 import { useAuth } from '../context/AuthContext';
+import {
+    User, ShieldCheck, Info, Camera, Trash2, Calendar,
+    BookOpen, Layers, CheckCircle2, Target, RotateCcw,
+    Mail, AtSign, BadgeCheck, Trophy
+} from 'lucide-react';
 
 const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
@@ -13,7 +17,6 @@ const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent(`
 </svg>
 `);
 
-// Helper: crop the image on a canvas and return a File
 const getCroppedImageFile = (imageSrc, croppedAreaPixels) => {
     return new Promise((resolve, reject) => {
         const image = new Image();
@@ -64,7 +67,6 @@ const Profile = () => {
     const [imgError, setImgError] = useState(false);
     const [saving, setSaving] = useState(false);
 
-    // Crop modal state
     const [showCropModal, setShowCropModal] = useState(false);
     const [rawImageSrc, setRawImageSrc] = useState(null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -72,16 +74,28 @@ const Profile = () => {
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
     const [todayGoal, setTodayGoal] = useState(null);
+    const [revisionCount, setRevisionCount] = useState(0);
 
     useEffect(() => {
         fetchProfile();
         fetchTodayGoal();
+        fetchRevisionCount();
     }, []);
 
     const fetchTodayGoal = async () => {
         try {
             const { data } = await API.get('/goals');
             setTodayGoal(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // Reuses the same /topics endpoint the Topics page uses, just to count needsRevision
+    const fetchRevisionCount = async () => {
+        try {
+            const { data } = await API.get('/topics');
+            setRevisionCount((data || []).filter(t => t.needsRevision).length);
         } catch (error) {
             console.error(error);
         }
@@ -102,7 +116,6 @@ const Profile = () => {
         setLoading(false);
     };
 
-    // Step 1: user picks a raw file -> open crop modal
     const handlePhotoChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -122,7 +135,6 @@ const Profile = () => {
         setCroppedAreaPixels(croppedAreaPixelsValue);
     }, []);
 
-    // Step 2: user confirms crop -> generate final File + preview
     const handleConfirmCrop = async () => {
         try {
             const croppedFile = await getCroppedImageFile(rawImageSrc, croppedAreaPixels);
@@ -193,171 +205,298 @@ const Profile = () => {
     const hasCustomPhoto = Boolean(profile && profile.photo && profile.photo.trim() !== '');
     const displaySrc = photoPreview || (hasCustomPhoto && !imgError ? profile.photo : DEFAULT_AVATAR);
 
-    if (loading) return <div className="text-white text-center mt-10">Loading...</div>;
+    const cardClass = "bg-surface-card border border-surface-border rounded-2xl shadow-md hover:shadow-lg hover:border-[#AECDEA] hover:-translate-y-1 transition-all duration-300";
+    const inputClass = "w-full bg-surface-bg text-text p-3 rounded-lg border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition";
+
+    const goalPct = todayGoal && todayGoal.target > 0
+        ? Math.min(100, Math.round((todayGoal.achieved / todayGoal.target) * 100))
+        : 0;
+
+    const totalTopicsCount = profile?.totalTopics || 0;
+    const completedTopicsCount = profile?.completedTopics || 0;
+    const completionPct = totalTopicsCount > 0 ? Math.round((completedTopicsCount / totalTopicsCount) * 100) : 0;
+
+    if (loading) return <div className="text-text text-center mt-10">Loading...</div>;
 
     return (
-        <div className="min-h-screen bg-gray-900">
-            <Navbar />
-            <div className="max-w-2xl mx-auto p-6">
-                <h1 className="text-3xl font-bold text-white mb-6">My Profile</h1>
+        <div>
+            {/* Header */}
+            <div className="mb-6">
+                <h1 className="text-3xl font-bold text-text">My Profile</h1>
+                <p className="text-text-muted mt-1">Manage your personal information, account, and security settings.</p>
+            </div>
 
-                <div className="bg-gray-800 rounded-lg p-6">
-                    <div className="flex items-center gap-6 mb-6">
-                        <div className="relative w-24 h-24">
-                            <img
-                                src={displaySrc}
-                                alt="Profile"
-                                onError={() => setImgError(true)}
-                                className="w-24 h-24 rounded-full object-cover bg-gray-700"
-                            />
-                            {hasCustomPhoto && (
-                                <button
-                                    onClick={handleDeletePhoto}
-                                    title="Remove photo"
-                                    className="absolute bottom-0 right-0 bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg border-2 border-gray-800"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                                        <path fillRule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clipRule="evenodd" />
-                                    </svg>
-                                </button>
-                            )}
-                        </div>
-                        <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm cursor-pointer inline-block h-fit">
-                            Change Photo
-                            <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
-                        </label>
+            {/* Profile Header */}
+            <div className={`${cardClass} p-4 mb-5 flex items-center justify-between gap-4 flex-wrap`}>
+                <div className="flex items-center gap-4">
+                    <div className="relative w-16 h-16 shrink-0">
+                        <img
+                            src={displaySrc}
+                            alt="Profile"
+                            onError={() => setImgError(true)}
+                            className="w-16 h-16 rounded-full object-cover bg-surface-bg border-2 border-surface-border"
+                        />
+                        {hasCustomPhoto && (
+                            <button
+                                onClick={handleDeletePhoto}
+                                title="Remove photo"
+                                className="absolute bottom-0 right-0 bg-danger hover:bg-danger/90 text-white w-6 h-6 rounded-full flex items-center justify-center shadow-md border-2 border-surface-card"
+                            >
+                                <Trash2 size={11} />
+                            </button>
+                        )}
                     </div>
 
-                    <form onSubmit={handleSave} className="space-y-4 mb-6">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-gray-400 mb-1">First Name</label>
-                                <input
-                                    type="text"
-                                    value={firstName}
-                                    onChange={(e) => setFirstName(e.target.value)}
-                                    className="w-full bg-gray-700 text-white p-3 rounded-lg"
-                                    placeholder="First name"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-gray-400 mb-1">Last Name</label>
-                                <input
-                                    type="text"
-                                    value={lastName}
-                                    onChange={(e) => setLastName(e.target.value)}
-                                    className="w-full bg-gray-700 text-white p-3 rounded-lg"
-                                    placeholder="Last name"
-                                />
-                            </div>
-                        </div>
+                    <div>
+                        <h2 className="text-text font-bold text-lg">
+                            {profile?.firstName} {profile?.lastName}
+                        </h2>
+                        <p className="text-text-muted text-sm">{profile?.email}</p>
+                        <p className="text-text-muted text-xs mt-0.5">
+                            Member since {new Date(profile?.joinedDate).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
+                        </p>
+                    </div>
+                </div>
 
+                <label className="bg-brand hover:bg-brand-hover text-white px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer inline-flex items-center gap-2 shrink-0">
+                    <Camera size={15} />
+                    Change Photo
+                    <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
+                </label>
+            </div>
+
+            {/* Personal Information */}
+            <div className={`${cardClass} p-5 mb-5`}>
+                <h2 className="text-text font-bold mb-5 flex items-center gap-2">
+                    <User size={18} className="text-brand" />
+                    Personal Information
+                </h2>
+
+                <form onSubmit={handleSave} className="space-y-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <label className="block text-gray-400 mb-1">Email</label>
-                            <input
-                                type="email"
-                                value={profile?.email || ''}
-                                disabled
-                                className="w-full bg-gray-700 text-gray-500 p-3 rounded-lg cursor-not-allowed"
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-gray-400 mb-1">Phone Number</label>
-                                <input
-                                    type="tel"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                                    placeholder="10-digit mobile number"
-                                    className="w-full bg-gray-700 text-white p-3 rounded-lg"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-gray-400 mb-1">Date of Birth</label>
-                                <input
-                                    type="date"
-                                    value={dob}
-                                    onChange={(e) => setDob(e.target.value)}
-                                    max={new Date().toISOString().slice(0, 10)}
-                                    className="w-full bg-gray-700 text-white p-3 rounded-lg"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-gray-400 mb-1">Country</label>
+                            <label className="block text-text-muted text-sm mb-2">First Name</label>
                             <input
                                 type="text"
-                                value={country}
-                                onChange={(e) => setCountry(e.target.value)}
-                                placeholder="e.g. India"
-                                className="w-full bg-gray-700 text-white p-3 rounded-lg"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                className={inputClass}
+                                placeholder="First name"
                             />
                         </div>
-
                         <div>
-                            <label className="block text-gray-400 mb-1">Password</label>
-                            <div className="flex items-center gap-3">
-                                <input
-                                    type="password"
-                                    value="••••••••"
-                                    disabled
-                                    className="flex-1 bg-gray-700 text-gray-300 p-3 rounded-lg cursor-not-allowed"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={handleResetPassword}
-                                    className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-3 rounded-lg text-sm whitespace-nowrap"
-                                >
-                                    {profile?.hasPassword ? 'Reset' : 'Set Password'}
-                                </button>
-                            </div>
+                            <label className="block text-text-muted text-sm mb-2">Last Name</label>
+                            <input
+                                type="text"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                                className={inputClass}
+                                placeholder="Last name"
+                            />
                         </div>
+                    </div>
 
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label className="block text-text-muted text-sm mb-2">Phone Number</label>
+                            <input
+                                type="tel"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                                placeholder="10-digit mobile number"
+                                className={inputClass}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-text-muted text-sm mb-2">Date of Birth</label>
+                            <input
+                                type="date"
+                                value={dob}
+                                onChange={(e) => setDob(e.target.value)}
+                                max={new Date().toISOString().slice(0, 10)}
+                                className={inputClass}
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-text-muted text-sm mb-2">Country</label>
+                        <input
+                            type="text"
+                            value={country}
+                            onChange={(e) => setCountry(e.target.value)}
+                            placeholder="e.g. India"
+                            className={inputClass}
+                        />
+                    </div>
+
+                    <div className="flex justify-center">
                         <button
                             type="submit"
                             disabled={saving}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+                            className="bg-brand hover:bg-brand-hover disabled:opacity-60 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition"
                         >
                             {saving ? 'Saving...' : 'Save Changes'}
                         </button>
-                    </form>
+                    </div>
+                </form>
+            </div>
 
-                    {todayGoal && todayGoal.target > 0 && (
-                        <div className="bg-gray-700/50 border border-gray-600 rounded-lg p-4 mb-4">
-                            <div className="flex justify-between items-center mb-2">
-                                <p className="text-gray-300 text-sm font-medium">Today's Goal</p>
-                                <span className={`text-sm font-bold ${todayGoal.achieved >= todayGoal.target ? 'text-green-400' : 'text-yellow-400'}`}>
-                                    {todayGoal.achieved} / {todayGoal.target} solved
-                                </span>
-                            </div>
-                            <div className="w-full bg-gray-800 rounded-full h-2 overflow-hidden">
-                                <div
-                                    className={`h-2 rounded-full ${todayGoal.achieved >= todayGoal.target ? 'bg-green-500' : 'bg-blue-500'}`}
-                                    style={{ width: `${Math.min(100, Math.round((todayGoal.achieved / todayGoal.target) * 100))}%` }}
-                                />
-                            </div>
+            {/* Account Information + Quick Stats — side by side */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5 items-stretch">
+                {/* Account Information */}
+                <div className={`${cardClass} p-5 flex flex-col`}>
+                    <h2 className="text-text font-bold mb-5 flex items-center gap-2">
+                        <Info size={18} className="text-brand" />
+                        Account Information
+                    </h2>
+
+                    <div className="space-y-4">
+                        <div>
+                            <label className="text-text-muted text-xs font-semibold uppercase tracking-wide flex items-center gap-1.5 mb-1">
+                                <Mail size={12} /> Email
+                            </label>
+                            <p className="text-text text-sm">{profile?.email}</p>
                         </div>
-                    )}
+                        <div>
+                            <label className="text-text-muted text-xs font-semibold uppercase tracking-wide flex items-center gap-1.5 mb-1">
+                                <AtSign size={12} /> Username
+                            </label>
+                            <p className="text-text text-sm">{profile?.email?.split('@')[0]}</p>
+                        </div>
+                        <div>
+                            <label className="text-text-muted text-xs font-semibold uppercase tracking-wide flex items-center gap-1.5 mb-1">
+                                <BadgeCheck size={12} /> Account Status
+                            </label>
+                            <span className="inline-flex items-center gap-1 text-success text-sm font-semibold bg-success/10 px-2.5 py-1 rounded-full">
+                                <CheckCircle2 size={13} /> Verified
+                            </span>
+                        </div>
+                        <div>
+                            <label className="text-text-muted text-xs font-semibold uppercase tracking-wide flex items-center gap-1.5 mb-1">
+                                <Calendar size={12} /> Joined On
+                            </label>
+                            <p className="text-text text-sm">
+                                {new Date(profile?.joinedDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-                    <div className="border-t border-gray-700 pt-4">
-                        <p className="text-gray-400 text-sm mb-3">
-                            Joined on {new Date(profile?.joinedDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                {/* Quick Stats */}
+                <div className={`${cardClass} p-5`}>
+                    <h2 className="text-text font-bold mb-5 flex items-center gap-2">
+                        <Layers size={18} className="text-brand" />
+                        Quick Stats
+                    </h2>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className={`${cardClass} p-4 flex flex-col items-center text-center gap-1`}>
+                            <BookOpen size={18} className="text-brand mb-1" />
+                            <span className="text-brand text-2xl font-bold">{profile?.totalProblems || 0}</span>
+                            <span className="text-text-muted text-xs">Problems Solved</span>
+                        </div>
+                        <div className={`${cardClass} p-4 flex flex-col items-center text-center gap-1`}>
+                            <Layers size={18} className="text-text-muted mb-1" />
+                            <span className="text-text text-2xl font-bold">{profile?.totalTopics || 0}</span>
+                            <span className="text-text-muted text-xs">Topics Added</span>
+                            <span className="text-text-muted text-[11px]">{profile?.completedTopics || 0} Completed</span>
+                        </div>
+                        <div className={`${cardClass} p-4 flex flex-col items-center text-center gap-1`}>
+                            <CheckCircle2 size={18} className="text-success mb-1" />
+                            <span className="text-success text-2xl font-bold">{profile?.completedTopics || 0}</span>
+                            <span className="text-text-muted text-xs">Completed Topics</span>
+                            <span className="text-success text-[11px] font-semibold">{completionPct}%</span>
+                        </div>
+                        <div className={`${cardClass} p-4 flex flex-col items-center text-center gap-1`}>
+                            <RotateCcw size={18} className="text-danger mb-1" />
+                            <span className="text-danger text-2xl font-bold">{revisionCount}</span>
+                            <span className="text-text-muted text-xs">Revision Pending</span>
+                            <span className="text-text-muted text-[11px]">
+                                {revisionCount === 0 ? 'All caught up 🎉' : 'Needs attention'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Today's Goal Progress */}
+            {todayGoal && todayGoal.target > 0 && (
+                <div className={`${cardClass} p-5 mb-5`}>
+                    <div className="flex justify-between items-center mb-2">
+                        <p className="text-text font-bold flex items-center gap-2">
+                            <Target size={18} className="text-brand" /> Today's Goal Progress
                         </p>
-                        <div className="grid grid-cols-3 gap-4">
-                            <div className="bg-gray-700 p-3 rounded-lg text-center">
-                                <p className="text-gray-400 text-xs">Total Problems</p>
-                                <p className="text-white text-xl font-bold">{profile?.totalProblems || 0}</p>
-                            </div>
-                            <div className="bg-gray-700 p-3 rounded-lg text-center">
-                                <p className="text-gray-400 text-xs">Total Topics</p>
-                                <p className="text-white text-xl font-bold">{profile?.totalTopics || 0}</p>
-                            </div>
-                            <div className="bg-gray-700 p-3 rounded-lg text-center">
-                                <p className="text-gray-400 text-xs">Completed Topics</p>
-                                <p className="text-green-400 text-xl font-bold">{profile?.completedTopics || 0}</p>
-                            </div>
+                        <span className={`text-sm font-bold ${todayGoal.achieved >= todayGoal.target ? 'text-success' : 'text-brand'}`}>
+                            {todayGoal.achieved} / {todayGoal.target} solved
+                        </span>
+                    </div>
+                    <div className="w-full bg-surface-bg rounded-full h-2.5 overflow-hidden">
+                        <div
+                            className={`h-2.5 rounded-full transition-all duration-500 ${todayGoal.achieved >= todayGoal.target ? 'bg-success' : 'bg-brand'}`}
+                            style={{ width: `${goalPct}%` }}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* Security */}
+            <div className={`${cardClass} p-5`}>
+                <h2 className="text-text font-bold mb-5 flex items-center gap-2">
+                    <ShieldCheck size={18} className="text-brand" />
+                    Security
+                </h2>
+
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <label className="block text-text-muted text-sm mb-2">Password</label>
+                        <p
+                            className="text-text text-lg tracking-widest inline-block px-3 py-1.5 rounded-lg mb-2"
+                            style={{ backgroundColor: '#FAFBFC' }}
+                        >
+                            ••••••••••••
+                        </p>
+                        <p className="text-text-muted text-xs">
+                            Last Updated: {new Date(profile?.joinedDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={handleResetPassword}
+                        className="bg-surface-bg hover:bg-surface-border text-text px-5 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap border border-surface-border transition"
+                    >
+                        {profile?.hasPassword ? 'Change Password' : 'Set Password'}
+                    </button>
+                </div>
+            </div>
+
+            {/* Achievements */}
+            <div className={`${cardClass} p-5 mt-5`}>
+                <h2 className="text-text font-bold mb-5 flex items-center gap-2">
+                    <Trophy size={18} className="text-brand" />
+                    Achievements
+                </h2>
+                <div className="space-y-3">
+                    <div className={`flex items-center gap-3 p-3 rounded-lg bg-surface-bg ${(profile?.totalProblems || 0) < 1 ? 'opacity-40' : ''}`}>
+                        <span className="text-xl">🏆</span>
+                        <div>
+                            <p className="text-text text-sm font-semibold">First Problem Solved</p>
+                            {(profile?.totalProblems || 0) < 1 && <p className="text-text-muted text-xs">Locked</p>}
+                        </div>
+                    </div>
+                    <div className={`flex items-center gap-3 p-3 rounded-lg bg-surface-bg ${(profile?.totalProblems || 0) < 10 ? 'opacity-40' : ''}`}>
+                        <span className="text-xl">🏅</span>
+                        <div>
+                            <p className="text-text text-sm font-semibold">10 Problems Milestone</p>
+                            <p className="text-text-muted text-xs">
+                                {(profile?.totalProblems || 0) < 10 ? `Locked (${profile?.totalProblems || 0}/10)` : 'Unlocked'}
+                            </p>
+                        </div>
+                    </div>
+                    <div className={`flex items-center gap-3 p-3 rounded-lg bg-surface-bg ${(profile?.completedTopics || 0) < 1 ? 'opacity-40' : ''}`}>
+                        <span className="text-xl">⭐</span>
+                        <div>
+                            <p className="text-text text-sm font-semibold">First Topic Completed</p>
+                            {(profile?.completedTopics || 0) < 1 && <p className="text-text-muted text-xs">Locked</p>}
                         </div>
                     </div>
                 </div>
@@ -365,11 +504,11 @@ const Profile = () => {
 
             {/* Crop Modal */}
             {showCropModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-                    <div className="bg-gray-800 rounded-lg p-6 w-full max-w-lg">
-                        <h3 className="text-white font-bold text-lg mb-3">Adjust Your Photo</h3>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-surface-card border border-surface-border rounded-2xl p-6 w-full max-w-lg shadow-xl">
+                        <h3 className="text-text font-bold text-lg mb-3">Adjust Your Photo</h3>
 
-                        <div className="relative w-full h-80 bg-gray-900 rounded-lg overflow-hidden">
+                        <div className="relative w-full h-80 bg-surface-bg rounded-lg overflow-hidden">
                             <Cropper
                                 image={rawImageSrc}
                                 crop={crop}
@@ -384,7 +523,7 @@ const Profile = () => {
                         </div>
 
                         <div className="mt-4">
-                            <label className="text-gray-400 text-sm block mb-1">Zoom</label>
+                            <label className="text-text-muted text-sm block mb-1">Zoom</label>
                             <input
                                 type="range"
                                 min={1}
@@ -392,20 +531,20 @@ const Profile = () => {
                                 step={0.1}
                                 value={zoom}
                                 onChange={(e) => setZoom(Number(e.target.value))}
-                                className="w-full"
+                                className="w-full accent-brand"
                             />
                         </div>
 
                         <div className="flex gap-3 mt-4">
                             <button
                                 onClick={handleConfirmCrop}
-                                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg"
+                                className="flex-1 bg-brand hover:bg-brand-hover text-white py-3 rounded-lg font-semibold transition"
                             >
                                 Save Crop
                             </button>
                             <button
                                 onClick={() => { setShowCropModal(false); setRawImageSrc(null); }}
-                                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg"
+                                className="flex-1 bg-surface-bg hover:bg-surface-border text-text py-3 rounded-lg font-semibold border border-surface-border transition"
                             >
                                 Cancel
                             </button>
