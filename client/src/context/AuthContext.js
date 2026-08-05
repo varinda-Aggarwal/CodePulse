@@ -4,20 +4,36 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('token'));
+    // sessionStorage checked first — it's unique per tab, so if THIS tab has its own
+    // session there, that takes priority over whatever another tab wrote to localStorage
+    const [token, setToken] = useState(
+        sessionStorage.getItem('token') || localStorage.getItem('token')
+    );
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (token) {
-            const userData = JSON.parse(localStorage.getItem('user'));
+            const userData = JSON.parse(
+                sessionStorage.getItem('user') || localStorage.getItem('user')
+            );
             setUser(userData);
         }
         setLoading(false);
     }, [token]);
 
-    const login = (userData, userToken) => {
-        localStorage.setItem('token', userToken);
-        localStorage.setItem('user', JSON.stringify(userData));
+    // rememberMe = true  -> localStorage  (survives closing the browser)
+    // rememberMe = false -> sessionStorage (cleared when the tab/browser closes)
+    const login = (userData, userToken, rememberMe = true) => {
+        const storage = rememberMe ? localStorage : sessionStorage;
+        const otherStorage = rememberMe ? sessionStorage : localStorage;
+
+        // Always clear the other storage first, so a stale token left over from
+        // a previous "remembered" or "not remembered" session never conflicts
+        otherStorage.removeItem('token');
+        otherStorage.removeItem('user');
+
+        storage.setItem('token', userToken);
+        storage.setItem('user', JSON.stringify(userData));
         setToken(userToken);
         setUser(userData);
     };
@@ -25,7 +41,10 @@ export const AuthProvider = ({ children }) => {
     const updateUser = (updatedFields) => {
         setUser((prev) => {
             const updated = { ...prev, ...updatedFields };
-            localStorage.setItem('user', JSON.stringify(updated));
+            // Write back to whichever storage THIS tab's session actually lives in —
+            // never assume localStorage, or it leaks into other tabs on their next refresh
+            const storage = sessionStorage.getItem('token') ? sessionStorage : localStorage;
+            storage.setItem('user', JSON.stringify(updated));
             return updated;
         });
     };
@@ -33,6 +52,8 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
         setToken(null);
         setUser(null);
     };
