@@ -14,7 +14,7 @@ router.post('/forgot-password', forgotPasswordLimiter, validateForgotPassword, f
 router.post('/reset-password/:token', forgotPasswordLimiter, validateResetPassword, resetPassword);
 
 // Google OAuth routes
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'], prompt: 'select_account' }));
 
 router.get('/google/callback',
     passport.authenticate('google', { failureRedirect: '/login', session: false }),
