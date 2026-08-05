@@ -21,12 +21,16 @@ const Register = () => {
 
     const inputClass = "w-full bg-surface-bg text-text p-2.5 rounded-xl border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition text-base";
 
-    // Matches backend's validateSendOtp rule: min 6 chars + at least one number
+    // Matches backend's validateSendOtp rule exactly:
+    // min 8 chars, at least 1 uppercase, 1 lowercase, 1 number, 1 special char (@$!%*?&#)
     const passwordChecks = {
-        length: formData.password.length >= 6,
-        hasNumber: /\d/.test(formData.password)
+        length: formData.password.length >= 8,
+        hasUpper: /[A-Z]/.test(formData.password),
+        hasLower: /[a-z]/.test(formData.password),
+        hasNumber: /\d/.test(formData.password),
+        hasSpecial: /[@$!%*?&#]/.test(formData.password)
     };
-    const isPasswordValid = passwordChecks.length && passwordChecks.hasNumber;
+    const isPasswordValid = Object.values(passwordChecks).every(Boolean);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,7 +39,7 @@ const Register = () => {
     const handleSendOtp = async (e) => {
         e.preventDefault();
         if (!isPasswordValid) {
-            toast.error('Password must be at least 6 characters and include a number');
+            toast.error('Password must be at least 8 characters and include an uppercase letter, a lowercase letter, a number, and a special character (@$!%*?&#)');
             return;
         }
         if (formData.password !== formData.confirmPassword) {
@@ -159,18 +163,31 @@ const Register = () => {
                             </button>
                         </div>
 
-                        {/* Live password requirement tooltip */}
-                        {passwordFocused && (
+                        {/* Live password requirement tooltip — hides itself the moment every rule is satisfied,
+                            doesn't wait for blur/click-elsewhere */}
+                        {passwordFocused && !isPasswordValid && (
                             <div className="absolute z-20 left-0 right-0 top-full mt-1 bg-surface-card border border-surface-border rounded-lg shadow-lg p-3">
                                 <p className="text-text-muted text-[11px] font-semibold uppercase tracking-wide mb-1.5">Password must have</p>
                                 <div className="space-y-1">
                                     <div className={`flex items-center gap-1.5 text-sm ${passwordChecks.length ? 'text-success' : 'text-text-muted'}`}>
                                         {passwordChecks.length ? <Check size={13} /> : <X size={13} />}
-                                        At least 6 characters
+                                        At least 8 characters
+                                    </div>
+                                    <div className={`flex items-center gap-1.5 text-sm ${passwordChecks.hasUpper ? 'text-success' : 'text-text-muted'}`}>
+                                        {passwordChecks.hasUpper ? <Check size={13} /> : <X size={13} />}
+                                        One uppercase letter
+                                    </div>
+                                    <div className={`flex items-center gap-1.5 text-sm ${passwordChecks.hasLower ? 'text-success' : 'text-text-muted'}`}>
+                                        {passwordChecks.hasLower ? <Check size={13} /> : <X size={13} />}
+                                        One lowercase letter
                                     </div>
                                     <div className={`flex items-center gap-1.5 text-sm ${passwordChecks.hasNumber ? 'text-success' : 'text-text-muted'}`}>
                                         {passwordChecks.hasNumber ? <Check size={13} /> : <X size={13} />}
-                                        At least one number
+                                        One number
+                                    </div>
+                                    <div className={`flex items-center gap-1.5 text-sm ${passwordChecks.hasSpecial ? 'text-success' : 'text-text-muted'}`}>
+                                        {passwordChecks.hasSpecial ? <Check size={13} /> : <X size={13} />}
+                                        One special character (@$!%*?&#)
                                     </div>
                                 </div>
                             </div>
