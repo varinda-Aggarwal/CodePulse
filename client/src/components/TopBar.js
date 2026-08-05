@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
-import { Sun, Moon, Bell } from 'lucide-react';
+import { Sun, Moon, Bell, LogOut } from 'lucide-react';
 
 const pageTitles = {
     '/dashboard': 'Dashboard',
@@ -15,8 +15,14 @@ const pageTitles = {
 
 const TopBar = () => {
     const { theme, toggleTheme } = useTheme();
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
 
     const getGreeting = () => {
         const hour = new Date().getHours();
@@ -87,6 +93,15 @@ const TopBar = () => {
                     aria-label="Toggle theme"
                 >
                     {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                </button>
+
+                <button
+                    onClick={handleLogout}
+                    className="p-2.5 rounded-full bg-white text-danger hover:bg-danger/10 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-110 active:translate-y-0 active:scale-100 transition-all duration-200"
+                    aria-label="Logout"
+                    title="Logout"
+                >
+                    <LogOut size={18} />
                 </button>
             </div>
         </div>
