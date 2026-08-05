@@ -18,13 +18,14 @@ const otpLimiter = rateLimit({
     legacyHeaders: false
 });
 
-// Limiter for forgot-password requests
+// Limiter for forgot-password requests — keyed by email (not just IP), so one user's attempts don't block a different user testing from the same network/machine
 const forgotPasswordLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 3,
     message: { message: 'Too many password reset requests. Please try again after 15 minutes.' },
     standardHeaders: true,
-    legacyHeaders: false
+    legacyHeaders: false,
+    keyGenerator: (req) => `${req.ip}-${(req.body?.email || '').toLowerCase()}`
 });
 
 module.exports = { loginLimiter, otpLimiter, forgotPasswordLimiter };
