@@ -11,6 +11,7 @@ const goalRoutes = require('./routes/goalRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const passport = require('./config/passport');
 const aiRoutes = require('./routes/aiRoutes');
+const supportRoutes = require('./routes/supportRoutes');
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use('/api/goals', goalRoutes);
 app.use('/api/profile', profileRoutes);
 app.use(passport.initialize());
 app.use('/api/ai', aiRoutes);
+app.use('/api/support', supportRoutes);
 
 app.get('/', (req, res) => {
     res.send('CodePulse Server is running!');
