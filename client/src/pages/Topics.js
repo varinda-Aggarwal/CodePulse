@@ -73,6 +73,7 @@ const Topics = () => {
         try {
             const { data } = await API.post('/topics', { name, status });
             setTopics([...topics, data]);
+            setAllTopics((prev) => [...prev, data]);
             setName('');
             setStatus('Not Started');
             toast.success('Topic added!');
@@ -85,6 +86,7 @@ const Topics = () => {
         try {
             await API.delete(`/topics/${id}`);
             setTopics(topics.filter(t => t._id !== id));
+            setAllTopics((prev) => prev.filter(t => t._id !== id));
             toast.success('Topic deleted!');
         } catch (error) {
             toast.error('Failed to delete topic');
@@ -98,6 +100,7 @@ const Topics = () => {
                 completedAt: newStatus === 'Done' ? new Date() : null
             });
             setTopics(prev => prev.map(t => t._id === id ? { ...t, status: data.status, completedAt: data.completedAt } : t));
+            setAllTopics(prev => prev.map(t => t._id === id ? { ...t, status: data.status, completedAt: data.completedAt } : t));
             toast.success('Status updated!');
         } catch (error) {
             toast.error('Failed to update status');
@@ -108,6 +111,7 @@ const Topics = () => {
         try {
             const { data } = await API.put(`/topics/${id}`, { needsRevision: !current });
             setTopics(topics.map(t => t._id === id ? data : t));
+            setAllTopics(prev => prev.map(t => t._id === id ? data : t));
             toast.success('Revision updated!');
         } catch (error) {
             toast.error('Failed to update revision');
@@ -123,6 +127,7 @@ const Topics = () => {
         try {
             const { data } = await API.put(`/topics/${id}`, { name: editName });
             setTopics(topics.map(t => t._id === id ? data : t));
+            setAllTopics(prev => prev.map(t => t._id === id ? data : t));
             setEditingId(null);
             toast.success('Topic renamed!');
         } catch (error) {
