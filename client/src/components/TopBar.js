@@ -4,15 +4,6 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { Sun, Moon, Bell, LogOut } from 'lucide-react';
 
-const pageTitles = {
-    '/dashboard': 'Dashboard',
-    '/topics': 'Topics',
-    '/problems': 'Problems',
-    '/goal': 'Daily Goal',
-    '/study-plan': 'AI Study Plan',
-    '/profile': 'Profile',
-};
-
 const TopBar = () => {
     const { theme, toggleTheme } = useTheme();
     const { user, logout } = useAuth();
@@ -33,12 +24,6 @@ const TopBar = () => {
     const [notifOpen, setNotifOpen] = useState(false);
     const notifRef = useRef(null);
 
-    const currentTitle = pageTitles[location.pathname] || 'Overview';
-    const isDashboard = location.pathname === '/dashboard';
-    const today = new Date().toLocaleDateString('en-US', {
-        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-    });
-
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (notifRef.current && !notifRef.current.contains(e.target)) {
@@ -51,21 +36,12 @@ const TopBar = () => {
 
     return (
         <div className="flex justify-between items-center bg-[#D8E3F3] px-8 py-4 border-b border-black/5">
-            {/* Left: greeting on Dashboard, page title + date elsewhere */}
+            {/* Left: greeting on every page */}
             <div>
-                {isDashboard ? (
-                    <>
-                        <p className="text-text font-bold text-lg">
-                            👋 {getGreeting()}, {user?.firstName || user?.username}
-                        </p>
-                        <p className="text-text-muted text-xs">Keep solving! Let's make today count.</p>
-                    </>
-                ) : (
-                    <>
-                        <p className="text-text font-bold text-lg italic">{currentTitle}</p>
-                        <p className="text-text-muted text-xs">{today}</p>
-                    </>
-                )}
+                <p className="text-text font-bold text-lg">
+                    👋 {getGreeting()}, {user?.firstName || user?.username}
+                </p>
+                <p className="text-text-muted text-xs">Keep solving! Let's make today count.</p>
             </div>
 
             {/* Right: notifications + theme toggle only */}
