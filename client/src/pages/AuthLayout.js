@@ -6,11 +6,13 @@ import {
     Code2,
     Quote,
     Sun,
+    Moon,
     Target
 } from 'lucide-react';
 
 import logoIcon from '../assets/branding/logo-icon.png';
 import laptopImage from '../assets/branding/laptop-preview.png';
+import { useTheme } from '../context/ThemeContext';
 
 const HERO_FEATURES = [
     {
@@ -319,7 +321,7 @@ const AUTH_LAYOUT_CSS = `
     color: #0F172A;
     font-size: 12px;
     font-weight: 700;
-    cursor: default;
+    cursor: pointer;
     padding: 0;
 }
 
@@ -540,6 +542,7 @@ const AuthLayout = ({
     illustration = 'login',
     showCenterDivider = false
 }) => {
+    const { theme, toggleTheme } = useTheme();
     const registerMode = illustration === 'register' || illustration === 'signup';
     return (
         <div className="codepulse-auth-shell">
@@ -548,6 +551,10 @@ const AuthLayout = ({
             <AuthIllustration registerMode={registerMode} />
             <main className="codepulse-auth-panel">
                 <div className="codepulse-curve-node" aria-hidden="true" />
+                <button type="button" onClick={toggleTheme} className="cp-theme-toggle">
+                    {theme === 'dark' ? <Sun /> : <Moon />}
+                    {theme === 'dark' ? 'Light' : 'Dark'}
+                </button>
                 <div className="cp-auth-content">
                     {children}
                 </div>
