@@ -45,6 +45,7 @@ const Sidebar = () => {
     const location = useLocation();
     const { user } = useAuth();
     const [collapsed, setCollapsed] = useState(false);
+    const [imgError, setImgError] = useState(false);
 
     return (
         <aside
@@ -78,8 +79,13 @@ const Sidebar = () => {
 
             {/* Profile section - vertical, centered (fixed, no scroll) */}
             <div className="flex flex-col items-center gap-2 pb-5 mb-2 border-b border-white/10 flex-shrink-0 px-3">
-                {user?.photo ? (
-                    <img src={user.photo} alt="Profile" className="h-16 w-16 rounded-full object-cover ring-2 ring-white/20" />
+                {user?.photo && !imgError ? (
+                    <img
+                        src={user.photo}
+                        alt="Profile"
+                        onError={() => setImgError(true)}
+                        className="h-16 w-16 rounded-full object-cover ring-2 ring-white/20"
+                    />
                 ) : (
                     <UserCircle size={64} className="text-slate-400" />
                 )}
