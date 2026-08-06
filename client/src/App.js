@@ -15,6 +15,7 @@ import DailyGoal from './pages/DailyGoal';
 import AIStudyPlan from './pages/AIStudyPlan';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import HelpSupport from './pages/HelpSupport';
 
 const PrivateRoute = ({ children }) => {
     const { token, loading } = useAuth();
@@ -42,6 +43,7 @@ function App() {
                     <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
                     <Route path="/goal" element={<PrivateRoute><DailyGoal /></PrivateRoute>} />
                     <Route path="/study-plan" element={<PrivateRoute><AIStudyPlan /></PrivateRoute>} />
+                    <Route path="/help" element={<PrivateRoute><HelpSupport /></PrivateRoute>} />
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>
             </Router>
