@@ -1,42 +1,44 @@
 import {
-    AlarmClock,
     BarChart3,
     BrainCircuit,
-    CheckCircle2,
-    Code2,
-    Quote,
     Sun,
     Moon,
-    Target
+    ArrowLeft
 } from 'lucide-react';
 
 import logoIcon from '../assets/branding/logo-icon.png';
-import laptopImage from '../assets/branding/laptop-preview.png';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
-const HERO_FEATURES = [
+const BOTTOM_FEATURES = [
     {
         icon: BarChart3,
         title: 'Track Problems',
-        text: 'Keep a log of solved problems.',
+        text: 'Keep a log of all the problems you solve.',
         color: '#57D8FF',
         bg: 'rgba(87, 216, 255, 0.14)'
     },
     {
-        icon: Target,
-        title: 'Daily Goals',
-        text: 'Set goals and stay on track.',
-        color: '#22C55E',
-        bg: 'rgba(34, 197, 94, 0.13)'
-    },
-    {
         icon: BrainCircuit,
         title: 'AI Study Plans',
-        text: 'Personalized plans based on your weak topics.',
-        color: '#57D8FF',
-        bg: 'rgba(87, 216, 255, 0.12)'
+        text: 'Get personalized plans based on your weak topics.',
+        color: '#7A59FF',
+        bg: 'rgba(122, 89, 255, 0.16)'
     },
 ];
+
+const DailyGoalsCard = () => (
+    <div className="cp-goal-card">
+        <div className="cp-goal-title">
+            🎯 Daily Goals
+        </div>
+        <h2>5/day</h2>
+        <div className="cp-progress">
+            <div className="cp-progress-fill" />
+        </div>
+        <span>3/5 completed</span>
+    </div>
+);
 
 const AUTH_LAYOUT_CSS = `
 .codepulse-auth-shell,
@@ -82,6 +84,8 @@ const AUTH_LAYOUT_CSS = `
     width: 63%;
     overflow: hidden;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .codepulse-auth-hero::before {
@@ -114,25 +118,23 @@ const AUTH_LAYOUT_CSS = `
 }
 
 .cp-hero-copy {
-    position: absolute;
+    position: relative;
     z-index: 8;
-    top: clamp(28px, 5.5vh, 54px);
-    left: 43px;
-    max-width: 390px;
+    padding: 32px 43px 0;
+    max-width: 460px;
 }
 
 .cp-brand-lockup {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 52px;
-    align-items: center;
+    gap: 14px;
+    margin-bottom: 37px;
 }
 
 .cp-brand-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 14px;
+    width: 52px;
+    height: 52px;
+    border-radius: 13px;
     display: grid;
     place-items: center;
     background: linear-gradient(145deg, #0B5ED7, #0A4FB8);
@@ -147,7 +149,7 @@ const AUTH_LAYOUT_CSS = `
 }
 
 .cp-brand-name{
-    font-size:32px;
+    font-size:28px;
     font-weight:550;
     letter-spacing:-0.03em;
     color:#fff;
@@ -156,136 +158,102 @@ const AUTH_LAYOUT_CSS = `
 .cp-hero-title {
     margin: 0;
     color: #FFFFFF;
-    font-size: clamp(2.15rem, 3.35vw, 3.35rem);
-    line-height: 0.98;
+    font-size: clamp(1.9rem, 2.9vw, 2.9rem);
+    line-height: 1.08;
     letter-spacing: -0.040em;
     font-weight: 610;
 }
 
 .cp-hero-title .accent {
     display: inline-block;
-   background:linear-gradient( 90deg, #58D6FF 0%, #78B9FF 45%, #7A59FF 100%);
+    background:linear-gradient( 90deg, #58D6FF 0%, #78B9FF 45%, #7A59FF 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
 }
 
+.cp-title-underline {
+    width: 52px;
+    height: 4px;
+    border-radius: 999px;
+    margin: 30px 0 18px;
+    background: linear-gradient(90deg, #58D6FF, #7A59FF);
+}
+
 .cp-hero-subtitle {
-    margin: 34px;
-    max-width: 560px;
-    color: rgba(255,255,255,0.78);
-    font-size: 13px;
-    line-height: 1.65;
-    font-weight: 600;
+    margin: 0;
+    max-width: 360px;
+    color: rgba(255,255,255,0.72);
+    font-size: 17.3px;
+    line-height: 1.55;
+    font-weight: 500;
 }
 
-.cp-feature-list {
-    margin-top: 130px;
+/* Reserved space that spans the FULL hero width, so the floating card can
+   sit out in the blank area to the right of the text column */
+.cp-hero-scene {
+    position: relative;
+    z-index: 8;
+    width: 100%;
+    height: 210px;
+    margin-top: 8px;
+}
+
+/* Bottom feature cards */
+.cp-feature-grid {
+    position: relative;
+    z-index: 8;
     display: grid;
-    gap: 20px;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 0 20% 49px 47px;  
+    max-width: 1000px; 
+    margin-top: auto;
 }
 
-.cp-feature-row {
+.cp-feature-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 22px 18px;
+    backdrop-filter: blur(10px);
     display: flex;
-    align-items: center;
-    gap: 15px;
+    flex-direction: column;
+    justify-content: center; /* ya flex-start */
+    min-height: 130px; /* dono cards ka fixed baseline height */
 }
 
 .cp-feature-icon {
-    width: 42px;
-    height: 42px;
-    flex: 0 0 42px;
+    width: 36px;
+    height: 36px;
     border-radius: 999px;
     display: grid;
     place-items: center;
-    border: 1px solid rgba(255,255,255,0.10);
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.10),
-        0 12px 24px rgba(0,0,0,0.20);
+    margin-bottom: 10px;
+}
+
+.cp-feature-underline {
+    width: 22px;
+    height: 2.5px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #58D6FF, #7A59FF);
+    margin-bottom: 7px;
 }
 
 .cp-feature-title {
-    margin: 0;
+    margin: 0 0 3px;
     color: rgba(255,255,255,0.95);
-    font-size: 18px;
-    line-height: 1.15;
+    font-size: 14px;
+    line-height: 1.2;
     font-weight: 650;
 }
 
 .cp-feature-text {
-    margin: 3px 0 0;
-    color: rgba(255,255,255,0.72);
-    font-size: 12px;
-    line-height: 1.35;
-    font-weight: 500;
-}
-
-.cp-hero-quote {
-    position: absolute;
-    z-index: 9;
-    left:50%;
-    transform:translateX(-5%);
-    bottom: 58px;
-    width: 300px;
-    min-height: 85px;
-    border-radius: 12px;
-    padding: 17px 23px;
-    display: flex;
-    align-items: flex-start;
-    gap: 9px;
-    color: #FFFFFF;
-    background:rgba(32,22,73,.45);
-    backdrop-filter:blur(20px);
-    -webkit-backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,.08);
-    box-shadow:
-        0 18px 40px rgba(88,214,255,.22),
-        inset 0 1px 0 rgba(255,255,255,.08);
-}
-
-.cp-hero-quote svg {
-    color: #57D8FF;
-    flex: 0 0 auto;
-    margin-top: 1px;
-}
-
-.cp-hero-quote p {
     margin: 0;
-    color: rgba(255,255,255,0.82);
-    font-size: 20px;
-    line-height: 1.5;
-    font-weight: 700;
-}
-
-/* Laptop Illustration */
-
-.cp-laptop-scene{
-    position:absolute;
-    right:3.4%;
-    top:25%;
-    width:530px;
-    z-index:5;
-    pointer-events:none;
-}
-
-.cp-laptop-image{
-    width:100%;
-    height:auto;
-    display:block;
-    filter: none;
-    -webkit-mask-image:linear-gradient(
-        to bottom,
-        black 0%,
-        black 88%,
-        transparent 100%
-    );
-
-    mask-image:linear-gradient(
-        to bottom,
-        black 0%,
-        black 88%,
-        transparent 100%
-    );
+    color: rgba(255,255,255,0.62);
+    font-size: 11.5px;
+    line-height: 1.4;
+    font-weight: 500;
 }
 
 /* RIGHT WHITE PANEL */
@@ -323,6 +291,35 @@ const AUTH_LAYOUT_CSS = `
     font-weight: 700;
     cursor: pointer;
     padding: 0;
+}
+
+.cp-back-btn {
+    position: absolute;
+    z-index: 5;
+    top: -35px;
+    left: -40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    background: transparent;
+    color: #0F172A;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+}
+
+.cp-back-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+@media (max-width: 640px) {
+    .cp-back-btn {
+        left: 20px;
+        top: 20px;
+    }
 }
 
 .cp-theme-toggle svg {
@@ -373,67 +370,135 @@ const AUTH_LAYOUT_CSS = `
         border-radius: 999px;
         border: 2px solid rgba(87, 216, 255, 0.95);
         background: #FDFEFF;
-       box-shadow:
+        box-shadow:
             0 0 0 7px rgba(88,214,255,.10),
             0 0 18px rgba(88,214,255,.45);
     }
 }
 
+/* Floating Daily Goals card — sits inside the reserved .cp-hero-scene band,
+   pushed toward the right blank space, subtler tilt than before */
+.cp-goal-card{
+    position:absolute;
+    right:24%;
+    top:-140%;
+    transform: translateY(-50%) perspective(1000px) rotateY(-20deg);
+    width:258px;
+    padding:20px;
+    height: 185px;
+    border-radius:20px;
+    background:rgba(32,22,73,.48);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.10);
+    transform-style:preserve-3d;
+    z-index:6;
+    box-shadow:
+        0 30px 60px rgba(0,0,0,.40),
+        0 0 45px rgba(122,89,255,.22),
+        inset 0 1px 0 rgba(255,255,255,.10);
+    transition: transform .35s ease;
+}
+
+.cp-goal-card::before{
+    content:"";
+    position:absolute;
+    inset:-22px;
+    border-radius:24px;
+    background:
+        radial-gradient(
+            circle,
+            rgba(122,89,255,.24),
+            transparent 72%
+        );
+    filter:blur(22px);
+    z-index:-2;
+}
+
+.cp-goal-card::after{
+    content:"";
+    position:absolute;
+    inset:-10px;
+    border-radius:22px;
+    border:1px solid rgba(255,255,255,.05);
+    opacity:.55;
+    z-index:-2;
+}
+
+.cp-goal-title{
+    color:#CFC9FF;
+    font-size:13px;
+    font-weight:600;
+}
+
+.cp-goal-card h2{
+    margin:12px 0;
+    color:white;
+    font-size:38px;
+    font-weight:700;
+}
+
+.cp-progress{
+    height:9px;
+    border-radius:999px;
+    overflow:hidden;
+    background:rgba(255,255,255,.12);
+}
+
+.cp-progress-fill{
+    width:68%;
+    height:100%;
+    border-radius:999px;
+    background:linear-gradient(
+        90deg,
+        #58D6FF,
+        #7A59FF
+    );
+}
+
+.cp-goal-card span{
+    display:block;
+    margin-top:10px;
+    color:rgba(255,255,255,.72);
+    font-size:12px;
+}
+
+.cp-goal-card:hover{
+    transform: translateY(-50%) perspective(1000px) rotateY(-3deg) translateX(-4px);
+}
+
 @media (max-width: 1180px) and (min-width: 1024px) {
     .cp-hero-copy {
-        left: 38px;
-        top: 24px;
-        max-width: 600px;
+        padding: 22px 38px 0;
     }
 
     .cp-brand-lockup {
-        margin-bottom: 18px;
+        margin-bottom: 16px;
     }
 
     .cp-hero-title {
-        font-size: 2.25rem;
+        font-size: 1.9rem;
     }
 
     .cp-hero-subtitle {
-        margin-top: 13px;
         font-size: 11.5px;
-        max-width: 310px;
+        max-width: 300px;
     }
 
-    .cp-feature-list {
-        margin-top: 17px;
-        gap: 9px;
+    .cp-hero-scene {
+        height: 170px;
     }
 
-    .cp-feature-icon {
-        width: 29px;
-        height: 29px;
-        flex-basis: 29px;
+    .cp-goal-card {
+        right: 6%;
+        width: 200px;
+        transform: translateY(-50%) perspective(1000px) rotateY(-8deg) scale(0.85);
     }
 
-    .cp-feature-title {
-        font-size: 11px;
+    .cp-feature-grid {
+        display: none;
     }
 
-    .cp-feature-text {
-        font-size: 9.5px;
-    }
-
-    .cp-hero-quote {
-        left: 38px;
-        bottom: 22px;
-        transform: scale(0.94);
-        transform-origin: left bottom;
-    }
-
-    .cp-laptop-scene {
-        right: -35px;
-        top: 17%;
-        width: 300px;
-        transform: scale(0.80);
-        transform-origin: top right;
-    }
-        
     .codepulse-auth-panel {
         width: 47.5%;
         padding-left: clamp(5.8rem, 9vw, 7rem);
@@ -443,12 +508,12 @@ const AUTH_LAYOUT_CSS = `
 
 @media (max-width: 1023px) {
     .codepulse-auth-shell{
-    background:
-    radial-gradient(circle at 35% 60%, rgba(88,214,255,.08), transparent 45%),
-    linear-gradient( 135deg, #141032, #1B1647, #251B5B, #312276);
-}
+        background:
+        radial-gradient(circle at 35% 60%, rgba(88,214,255,.08), transparent 45%),
+        linear-gradient( 135deg, #141032, #1B1647, #251B5B, #312276);
+    }
     .codepulse-auth-hero {
-        display: none;
+        width: 63%;   /* left side */
     }
 
     .codepulse-auth-shell::after {
@@ -462,6 +527,8 @@ const AUTH_LAYOUT_CSS = `
 
 @media (max-width: 640px) {
     .codepulse-auth-panel {
+        width: 48%;   /* right side */
+        margin-left: auto;
         padding-inline: 1.25rem;
     }
 
@@ -472,36 +539,7 @@ const AUTH_LAYOUT_CSS = `
 }
 `;
 
-const HeroFeature = ({ icon: Icon, title, text, color, bg }) => (
-    <div className="cp-feature-row">
-        <div
-            className="cp-feature-icon"
-            style={{
-                color,
-                background: bg
-            }}
-        >
-            <Icon size={17} strokeWidth={2.35} />
-        </div>
-
-        <div>
-            <p className="cp-feature-title">{title}</p>
-            <p className="cp-feature-text">{text}</p>
-        </div>
-    </div>
-);
-
-const DashboardLaptop = () => (
-    <div className="cp-laptop-scene">
-        <img
-            src={laptopImage}
-            alt="Dashboard Preview"
-            className="cp-laptop-image"
-        />
-    </div>
-);
-
-const AuthIllustration = ({ registerMode }) => (
+const AuthIllustration = () => (
     <aside className="codepulse-auth-hero" aria-hidden="true">
         <div className="cp-hero-copy">
             <div className="cp-brand-lockup">
@@ -517,45 +555,53 @@ const AuthIllustration = ({ registerMode }) => (
                 Crack <span className="accent">Placements.</span>
             </h1>
 
-            <div className="cp-feature-list">
-                {HERO_FEATURES.map((item) => (
-                    <HeroFeature key={item.title} {...item} />
-                ))}
-            </div>
+            <div className="cp-title-underline" />
+
+            <p className="cp-hero-subtitle">
+                Stay consistent, track your progress, and achieve your placement goals with CodePulse.
+            </p>
         </div>
 
-        <DashboardLaptop registerMode={registerMode} />
+        <div className="cp-hero-scene">
+            <DailyGoalsCard />
+        </div>
 
-        <div className="cp-hero-quote">
-            <Quote size={15} strokeWidth={2.5} />
-            <p>
-                One problem a day,
-                <br />
-                keeps rejection away.
-            </p>
+        <div className="cp-feature-grid">
+            {BOTTOM_FEATURES.map((f) => (
+                <div key={f.title} className="cp-feature-card">
+                    <div className="cp-feature-icon" style={{ backgroundColor: f.bg }}>
+                        <f.icon size={17} strokeWidth={2.35} color={f.color} />
+                    </div>
+                    <div className="cp-feature-underline" />
+                    <p className="cp-feature-title">{f.title}</p>
+                    <p className="cp-feature-text">{f.text}</p>
+                </div>
+            ))}
         </div>
     </aside>
 );
 
 const AuthLayout = ({
     children,
-    illustration = 'login',
     showCenterDivider = false
 }) => {
     const { theme, toggleTheme } = useTheme();
-    const registerMode = illustration === 'register' || illustration === 'signup';
+    const navigate = useNavigate();
     return (
         <div className="codepulse-auth-shell">
             <style>{AUTH_LAYOUT_CSS}</style>
             {showCenterDivider && <div className="cp-center-divider" />}
-            <AuthIllustration registerMode={registerMode} />
+            <AuthIllustration />
             <main className="codepulse-auth-panel">
                 <div className="codepulse-curve-node" aria-hidden="true" />
-                <button type="button" onClick={toggleTheme} className="cp-theme-toggle">
-                    {theme === 'dark' ? <Sun /> : <Moon />}
-                    {theme === 'dark' ? 'Light' : 'Dark'}
-                </button>
+                    <button type="button" onClick={toggleTheme} className="cp-theme-toggle">
+                        {theme === 'dark' ? <Sun /> : <Moon />}
+                        {theme === 'dark' ? 'Light' : 'Dark'}
+                    </button>
                 <div className="cp-auth-content">
+                    <button type="button" onClick={() => navigate('/')} className="cp-back-btn">
+                        <ArrowLeft /> Back
+                    </button>
                     {children}
                 </div>
             </main>
