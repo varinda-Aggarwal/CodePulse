@@ -7,6 +7,7 @@ import {
     ArrowLeft, Search, BookOpen, BrainCircuit, Bug, MessageCircle,
     ChevronRight, ChevronDown, Mail, Clock, Lightbulb, X, Send, Paperclip
 } from 'lucide-react';
+import logoIcon from '../assets/branding/logo-icon.png';
 
 const ARTICLES = [
     { q: 'How is Weak Topic calculated?', a: 'Each topic gets a "mastery score" from its solved problems — Easy problems add 1 point, Medium adds 2, and Hard adds 3. If a topic\'s total score is below 7, it\'s marked "weak" and becomes a focus area for your AI Study Plan.' },
@@ -38,7 +39,7 @@ const Modal = ({ title, onClose, children }) => (
 
 const HelpSupport = () => {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, token } = useAuth();
     const cardClass = "bg-surface-card border border-surface-border rounded-xl shadow-sm hover:shadow-md hover:border-[#AECDEA] hover:-translate-y-0.5 transition-all duration-200";
     const inputClass = "w-full bg-surface-bg text-text p-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition text-sm";
 
@@ -106,14 +107,24 @@ const HelpSupport = () => {
         setSending(false);
     };
 
+    // Bug/Contact/Feature forms require login — Getting Started & AI Study Plan info modals stay public
+    const openModalOrRequireLogin = (modalName) => {
+        if (!token) {
+            toast.error('Please log in to do this');
+            navigate('/login');
+            return;
+        }
+        setActiveModal(modalName);
+    };
+
     const QUICK_CARDS = [
         { icon: BookOpen, title: 'Getting Started', desc: 'Learn how to use CodePulse in 2 minutes.', cta: 'Read Guide', color: '#2563EB', bg: 'rgba(37,99,235,0.1)', action: () => setActiveModal('getting-started') },
         { icon: BrainCircuit, title: 'AI Study Plan', desc: 'Understand how AI creates your daily roadmap.', cta: 'Learn More', color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)', action: () => setActiveModal('ai-plan') },
-        { icon: Bug, title: 'Report Bug', desc: 'Found something broken? Let us know.', cta: 'Report Now', color: '#C1594F', bg: 'rgba(193,89,79,0.1)', action: () => setActiveModal('bug') },
-        { icon: MessageCircle, title: 'Contact Support', desc: 'Reach out for anything else on your mind.', cta: 'Get in Touch', color: '#D4A24C', bg: 'rgba(212,162,76,0.12)', action: () => setActiveModal('contact') },
+        { icon: Bug, title: 'Report Bug', desc: 'Found something broken? Let us know.', cta: 'Report Now', color: '#C1594F', bg: 'rgba(193,89,79,0.1)', action: () => openModalOrRequireLogin('bug') },
+        { icon: MessageCircle, title: 'Contact Support', desc: 'Reach out for anything else on your mind.', cta: 'Get in Touch', color: '#D4A24C', bg: 'rgba(212,162,76,0.12)', action: () => openModalOrRequireLogin('contact') },
     ];
 
-    return (
+    const pageContent = (
         <div>
             {/* Header */}
             <div className="mb-5">
@@ -158,7 +169,7 @@ const HelpSupport = () => {
 
             <p className="text-center text-sm text-text mb-6">
                 Have an idea instead?{' '}
-                <button onClick={() => setActiveModal('feature')} className="text-brand font-bold hover:underline">
+                <button onClick={() => openModalOrRequireLogin('feature')} className="text-brand font-bold hover:underline">
                     Suggest a Feature
                 </button>
             </p>
@@ -200,7 +211,7 @@ const HelpSupport = () => {
                     <Clock size={12} /> Average response: within 24 hrs
                 </p>
                 <button
-                    onClick={() => setActiveModal('contact')}
+                    onClick={() => openModalOrRequireLogin('contact')}
                     className="bg-brand hover:bg-brand-hover text-white px-5 py-2 rounded-lg text-sm font-semibold transition inline-flex items-center gap-1.5"
                 >
                     Contact Support <ChevronRight size={14} />
@@ -408,6 +419,49 @@ const HelpSupport = () => {
             )}
         </div>
     );
+
+    // Logged-out visitors don't get the Sidebar/TopBar layout — render a lightweight
+    // public shell instead (own navbar + padded container) so content isn't edge-to-edge
+    if (!token) {
+        return (
+            <div className="min-h-screen bg-surface-bg">
+                <nav className="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-10 py-4 bg-[#D8E3F3] border-b border-black/5">
+                    <button onClick={() => navigate('/')} className="flex items-center gap-2">
+                        <img src={logoIcon} alt="" className="w-8 h-8 rounded-lg object-contain" />
+                        <span className="text-text font-bold text-lg">CodePulse</span>
+                    </button>
+
+                    <div className="hidden md:flex items-center gap-8">
+                        <button onClick={() => navigate('/#features')} className="text-text-muted hover:text-text text-sm font-medium transition">Features</button>
+                        <button onClick={() => navigate('/#how-it-works')} className="text-text-muted hover:text-text text-sm font-medium transition">How It Works</button>
+                        <button onClick={() => navigate('/#why-codepulse')} className="text-text-muted hover:text-text text-sm font-medium transition">Why CodePulse</button>
+                        <button onClick={() => navigate('/#testimonials')} className="text-text-muted hover:text-text text-sm font-medium transition">Testimonials</button>
+                        <button onClick={() => navigate('/#contact')} className="text-text-muted hover:text-text text-sm font-medium transition">Contact</button>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="px-4 py-2 rounded-lg border border-surface-border text-text text-sm font-semibold hover:bg-white/40 transition"
+                        >
+                            Log In
+                        </button>
+                        <button
+                            onClick={() => navigate('/register')}
+                            className="px-4 py-2 rounded-lg bg-brand hover:bg-brand-hover text-white text-sm font-semibold transition"
+                        >
+                            Get Started
+                        </button>
+                    </div>
+                </nav>
+                <div className="max-w-5xl mx-auto px-6 sm:px-10 py-8">
+                    {pageContent}
+                </div>
+            </div>
+        );
+    }
+
+    return pageContent;
 };
 
 export default HelpSupport;
