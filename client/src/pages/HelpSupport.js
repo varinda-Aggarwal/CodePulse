@@ -218,6 +218,15 @@ const HelpSupport = () => {
                 </button>
             </div>
 
+            {/* Footer */}
+            <footer className="mt-8 pt-6 border-t border-surface-border flex items-center justify-between flex-wrap gap-4">
+                <div className="flex items-center gap-2">
+                    <img src={logoIcon} alt="" className="w-7 h-7 rounded-lg object-contain" />
+                    <span className="text-text font-bold text-sm">CodePulse</span>
+                </div>
+                <p className="text-text-muted text-xs">© 2026 CodePulse. All rights reserved.</p>
+            </footer>
+
             {/* ===== Modals ===== */}
 
             {activeModal === 'getting-started' && (
@@ -435,7 +444,6 @@ const HelpSupport = () => {
                         <button onClick={() => navigate('/#features')} className="text-text-muted hover:text-text text-sm font-medium transition">Features</button>
                         <button onClick={() => navigate('/#how-it-works')} className="text-text-muted hover:text-text text-sm font-medium transition">How It Works</button>
                         <button onClick={() => navigate('/#why-codepulse')} className="text-text-muted hover:text-text text-sm font-medium transition">Why CodePulse</button>
-                        <button onClick={() => navigate('/#testimonials')} className="text-text-muted hover:text-text text-sm font-medium transition">Testimonials</button>
                         <button onClick={() => navigate('/#contact')} className="text-text-muted hover:text-text text-sm font-medium transition">Contact</button>
                     </div>
 

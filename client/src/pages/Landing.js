@@ -43,7 +43,6 @@ const NAV_LINKS = [
     { label: 'Features', id: 'features' },
     { label: 'How It Works', id: 'how-it-works' },
     { label: 'Why CodePulse', id: 'why-codepulse' },
-    { label: 'Testimonials', id: 'testimonials' },
     { label: 'Contact', id: 'contact' },
 ];
 
@@ -755,9 +754,6 @@ const Landing = () => {
                 <DashboardMockup />
             </section>
 
-            {/* Testimonials placeholder anchor (content optional, kept as section for nav scroll target) */}
-            <div id="testimonials" />
-
             {/* CTA banner */}
             <section className="cp-cta">
                 <div className="cp-cta-inner">
@@ -776,6 +772,25 @@ const Landing = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Footer */}
+            <footer className="cp-footer">
+                <div className="cp-nav-logo">
+                    <img src={logoIcon} alt="" className="cp-nav-logo-icon" />
+                    <span className="cp-nav-logo-text">Code<span className="accent">Pulse</span></span>
+                </div>
+                <div className="cp-footer-links">
+                    {NAV_LINKS.map((l) => (
+                        <button key={l.id} onClick={() => scrollTo(l.id)}>{l.label}</button>
+                    ))}
+                </div>
+                <div className="cp-footer-social">
+                    <a href="https://github.com" target="_blank" rel="noreferrer"><GithubIcon size={16} /></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noreferrer"><LinkedinIcon size={16} /></a>
+                    <a href="https://twitter.com" target="_blank" rel="noreferrer"><TwitterIcon size={16} /></a>
+                    <a href="https://instagram.com" target="_blank" rel="noreferrer"><InstagramIcon size={16} /></a>
+                </div>
+            </footer>
         </div>
     );
 };
