@@ -123,11 +123,16 @@ const Problems = () => {
         }
     };
 
-    const handleRevision = async (id, current) => {
+    const handleRevision = async (problem) => {
+        // Only solved problems can be marked for revision (unmarking is always fine)
+        if (!problem.needsRevision && problem.status !== 'Solved') {
+            toast.error('Only solved problems can be marked for revision');
+            return;
+        }
         try {
-            const { data } = await API.put(`/problems/${id}`, { needsRevision: !current });
-            setProblems(problems.map(p => p._id === id ? { ...p, needsRevision: data.needsRevision } : p));
-            if (selectedProblem?._id === id) setSelectedProblem({ ...selectedProblem, needsRevision: data.needsRevision });
+            const { data } = await API.put(`/problems/${problem._id}`, { needsRevision: !problem.needsRevision });
+            setProblems(problems.map(p => p._id === problem._id ? { ...p, needsRevision: data.needsRevision } : p));
+            if (selectedProblem?._id === problem._id) setSelectedProblem({ ...selectedProblem, needsRevision: data.needsRevision });
         } catch (error) {
             toast.error('Failed to update');
         }
@@ -201,7 +206,14 @@ const Problems = () => {
                         <div className="flex gap-2">
                             <button onClick={() => openNotesModal(selectedProblem)} className="p-2 rounded-lg text-text-muted hover:text-brand hover:bg-brand/10 transition"><StickyNote size={18} /></button>
                             <button onClick={() => openEditModal(selectedProblem)} className="p-2 rounded-lg text-text-muted hover:text-brand hover:bg-brand/10 transition"><Pencil size={18} /></button>
-                            <button onClick={() => handleRevision(selectedProblem._id, selectedProblem.needsRevision)} className={`p-2 rounded-lg transition ${selectedProblem.needsRevision ? 'text-warning bg-warning-light' : 'text-text-muted hover:bg-surface-bg'}`}><RotateCcw size={18} /></button>
+                            <button
+                                onClick={() => handleRevision(selectedProblem)}
+                                disabled={!selectedProblem.needsRevision && selectedProblem.status !== 'Solved'}
+                                title={selectedProblem.status !== 'Solved' && !selectedProblem.needsRevision ? 'Only solved problems can be marked for revision' : 'Toggle revision'}
+                                className={`p-2 rounded-lg transition ${selectedProblem.needsRevision ? 'text-warning bg-warning-light' : selectedProblem.status !== 'Solved' ? 'text-text-muted/30 cursor-not-allowed' : 'text-text-muted hover:bg-surface-bg'}`}
+                            >
+                                <RotateCcw size={18} />
+                            </button>
                             <button onClick={() => handleDelete(selectedProblem._id)} className="p-2 rounded-lg text-text-muted hover:text-danger hover:bg-danger-light transition"><Trash2 size={18} /></button>
                         </div>
                     </div>
