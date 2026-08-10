@@ -237,9 +237,11 @@ const DailyGoal = () => {
                                         <span className={`text-2xl font-bold ${isToday ? 'text-brand' : 'text-text'}`}>
                                             {dayObj.day}
                                         </span>
-                                        <span className={`text-[10px] font-medium ${hasTarget ? 'text-text-muted' : 'text-text-muted/50'}`}>
-                                            {hasTarget ? `${entry.achieved}/${entry.target}` : 'No Goal'}
-                                        </span>
+                                        {!isFuture && (
+                                            <span className={`text-[10px] font-medium ${hasTarget ? 'text-text-muted' : 'text-text-muted/50'}`}>
+                                                {hasTarget ? `${entry.achieved}/${entry.target}` : 'No Goal'}
+                                            </span>
+                                        )}
                                     </div>
                                 );
                             })}
