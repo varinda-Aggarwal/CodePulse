@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useState } from 'react';
 import {
     Code2, BookOpen, BrainCircuit, LineChart, Target, Rocket,
-    ArrowRight
+    ArrowRight, UserCircle, LogOut
 } from 'lucide-react';
 import logoIcon from '../assets/branding/logo-icon.png';
 import logoText from '../assets/branding/logo-text.png';
@@ -163,6 +165,42 @@ const LANDING_CSS = `
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+.cp-nav-avatar-btn {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.cp-nav-avatar-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    object-fit: cover;
+    border: 2px solid rgba(122,89,255,0.4);
+}
+
+.cp-nav-logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: rgba(255,255,255,0.75);
+    cursor: pointer;
+    transition: color .2s, border-color .2s, background .2s;
+}
+.cp-nav-logout-btn:hover {
+    color: #fff;
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.05);
 }
 
 .cp-btn-outline {
@@ -577,6 +615,13 @@ const DashboardMockup = () => (
 
 const Landing = () => {
     const navigate = useNavigate();
+    const { token, user, logout } = useAuth();
+    const [imgError, setImgError] = useState(false);
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
 
     const scrollTo = (id) => {
         if (id === 'contact') {
@@ -602,8 +647,30 @@ const Landing = () => {
                     ))}
                 </div>
                 <div className="cp-nav-actions">
-                    <button className="cp-btn-outline" onClick={() => navigate('/login')}>Log In</button>
-                    <button className="cp-btn-fill" onClick={() => navigate('/register')}>Get Started</button>
+                    {token ? (
+                        <>
+                            <button className="cp-nav-avatar-btn" onClick={() => navigate('/profile')} title="Go to Profile">
+                                {user?.photo && !imgError ? (
+                                    <img
+                                        src={user.photo}
+                                        alt="Profile"
+                                        onError={() => setImgError(true)}
+                                        className="cp-nav-avatar-img"
+                                    />
+                                ) : (
+                                    <UserCircle size={38} color="rgba(255,255,255,0.8)" />
+                                )}
+                            </button>
+                            <button className="cp-nav-logout-btn" onClick={handleLogout} title="Log out">
+                                <LogOut size={16} />
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button className="cp-btn-outline" onClick={() => navigate('/login')}>Log In</button>
+                            <button className="cp-btn-fill" onClick={() => navigate('/register')}>Get Started</button>
+                        </>
+                    )}
                 </div>
             </nav>
 
@@ -620,7 +687,7 @@ const Landing = () => {
                         analyze performance, and get AI-powered study plans to stay ahead.
                     </p>
                     <div className="cp-hero-actions">
-                        <button className="cp-btn-fill" onClick={() => navigate('/register')}>
+                        <button className="cp-btn-fill" onClick={() => navigate(token ? '/dashboard' : '/register')}>
                             Get Started for Free <ArrowRight size={16} />
                         </button>
                         <button className="cp-btn-outline" onClick={() => scrollTo('features')}>
@@ -681,7 +748,7 @@ const Landing = () => {
                         From tracking progress to identifying weak areas and getting AI-recommendations,
                         CodePulse helps you stay consistent and interview-ready.
                     </p>
-                    <button className="cp-btn-fill" onClick={() => navigate('/login')}>
+                    <button className="cp-btn-fill" onClick={() => navigate(token ? '/dashboard' : '/login')}>
                         Explore Dashboard <ArrowRight size={16} />
                     </button>
                 </div>
@@ -702,7 +769,7 @@ const Landing = () => {
                         </div>
                     </div>
                     <div className="cp-cta-right">
-                        <button className="cp-btn-fill" onClick={() => navigate('/register')}>
+                        <button className="cp-btn-fill" onClick={() => navigate(token ? '/dashboard' : '/register')}>
                             Get Started for Free <ArrowRight size={16} />
                         </button>
                         <small>No credit card required</small>
