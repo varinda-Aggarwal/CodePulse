@@ -132,8 +132,8 @@ const Dashboard = () => {
 
     const statCards = [
         { label: 'Topics', value: stats?.topics?.totalTopics || 0, color: 'text-[#3F435A]', icon: BookOpen, iconColor: 'text-[#3F435A]', subtitle: `+${stats?.topicsThisWeek || 0} this week` },
-        { label: 'Solved', value: stats?.problems?.totalProblems || 0, color: 'text-[#90AA55]', icon: CheckCircle2, iconColor: 'text-[#90AA55]', subtitle: goalData?.target > 0 ? `${Math.round((goalData.achieved / goalData.target) * 100)}% today's goal` : 'No goal set' },
         { label: 'Problems', value: stats?.problems?.totalProblems || 0, color: 'text-[#5986D9]', icon: Code2, iconColor: 'text-[#5986D9]', subtitle: `+${stats?.problemsThisWeek || 0} this week` },
+        { label: 'Solved', value: stats?.problems?.solvedProblems || 0, color: 'text-[#90AA55]', icon: CheckCircle2, iconColor: 'text-[#90AA55]', subtitle: stats?.problems?.totalProblems > 0 ? `${Math.round((stats.problems.solvedProblems / stats.problems.totalProblems) * 100)}% of total` : 'No problems yet' },
         { label: 'Weak', value: stats?.weakTopics?.length || 0, color: 'text-[#C65A5A]', icon: AlertTriangle, iconColor: 'text-[#C65A5A]', subtitle: stats?.weakTopics?.length > 0 ? 'Needs revision' : 'None right now' },
         { label: 'Revision', value: stats?.revisionTopics?.length || 0, color: 'text-[#A49CC9]', icon: RotateCcw, iconColor: 'text-[#A49CC9]', subtitle: stats?.revisionTopics?.length === 0 ? 'Great job 🎉' : 'To revise' },
     ];
