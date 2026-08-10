@@ -20,7 +20,7 @@ const navGroups = [
     {
         title: 'Overview',
         items: [
-            { to: '/dashboard', label: 'Home', icon: Home },
+            { to: '/', label: 'Home', icon: Home },
             { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         ],
     },
