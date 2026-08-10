@@ -93,7 +93,12 @@ const Topics = () => {
         }
     };
 
-    const handleStatusChange = async (id, newStatus) => {
+    const handleStatusChange = async (id, newStatus, solvedCount) => {
+        // "Done" requires at least 1 solved problem — can't complete an empty topic
+        if (newStatus === 'Done' && (!solvedCount || solvedCount === 0)) {
+            toast.error('Solve at least one problem before marking this topic as Done');
+            return;
+        }
         try {
             const { data } = await API.put(`/topics/${id}`, {
                 status: newStatus,
@@ -107,7 +112,12 @@ const Topics = () => {
         }
     };
 
-    const handleRevision = async (id, current) => {
+    const handleRevision = async (id, current, solvedCount) => {
+        // Only topics with at least 1 solved problem can be marked for revision (unmarking is always fine)
+        if (!current && (!solvedCount || solvedCount === 0)) {
+            toast.error('Only topics with at least one solved problem can be marked for revision');
+            return;
+        }
         try {
             const { data } = await API.put(`/topics/${id}`, { needsRevision: !current });
             setTopics(topics.map(t => t._id === id ? data : t));
@@ -381,9 +391,10 @@ const Topics = () => {
                                         <Pencil size={18} />
                                     </button>
                                     <button
-                                        onClick={() => handleRevision(topic._id, topic.needsRevision)}
-                                        title="Toggle revision"
-                                        className={`p-2.5 rounded-lg transition ${topic.needsRevision ? 'text-warning bg-warning-light' : 'text-text-muted hover:bg-[#EAECF1]'}`}
+                                        onClick={() => handleRevision(topic._id, topic.needsRevision, s.solved)}
+                                        disabled={!topic.needsRevision && s.solved === 0}
+                                        title={!topic.needsRevision && s.solved === 0 ? 'Only topics with a solved problem can be marked for revision' : 'Toggle revision'}
+                                        className={`p-2.5 rounded-lg transition ${topic.needsRevision ? 'text-warning bg-warning-light' : s.solved === 0 ? 'text-text-muted/30 cursor-not-allowed' : 'text-text-muted hover:bg-[#EAECF1]'}`}
                                     >
                                         <RotateCcw size={18} />
                                     </button>
