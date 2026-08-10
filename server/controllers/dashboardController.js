@@ -24,10 +24,11 @@ const getDashboard = async (req, res) => {
 
         const topicWiseProblems = await Promise.all(
             topics.map(async (topic) => {
-                const problemsInTopic = await Problem.find({ user: userId, topic: topic._id }).select('difficulty status dateSolved');
+                const problemsInTopic = await Problem.find({ user: userId, topic: topic._id }).select('difficulty status dateSolved needsRevision');
                 const count = problemsInTopic.length;
 
-                const solvedProblems = problemsInTopic.filter(p => p.status === 'Solved');
+                // Counted as solved if status is 'Solved' OR marked for revision (covers any older data)
+                const solvedProblems = problemsInTopic.filter(p => p.status === 'Solved' || p.needsRevision);
                 const solved = solvedProblems.length;
                 const remaining = count - solved;
 
@@ -48,10 +49,14 @@ const getDashboard = async (req, res) => {
             })
         );
 
-        // Weak topics: mastery score below threshold (difficulty-weighted, not just raw count)
+        // Weak topics: mastery score below threshold, but only for topics that actually have problems attempted — a topic with zero problems isn't "weak", it's just untouched
         const weakTopics = topicWiseProblems
-            .filter(t => t.masteryScore < MASTERY_THRESHOLD)
+            .filter(t => t.count > 0 && t.masteryScore < MASTERY_THRESHOLD)
             .map(t => ({ topic: t.topic, masteryScore: t.masteryScore }));
+
+        // Derive total solved count from the same per-topic data (guaranteed consistent
+        // with topicWiseProblems, instead of a separate count query that gave mismatched results)
+        const solvedProblems = topicWiseProblems.reduce((sum, t) => sum + t.solved, 0);
 
         // User marked revision topics
         const revisionTopics = await Topic.find({ user: userId, needsRevision: true }).select('name status');
@@ -67,7 +72,7 @@ const getDashboard = async (req, res) => {
 
         res.status(200).json({
             topics: { totalTopics, completedTopics, inProgressTopics, pendingTopics },
-            problems: { totalProblems, easyProblems, mediumProblems, hardProblems },
+            problems: { totalProblems, solvedProblems, easyProblems, mediumProblems, hardProblems },
             topicWiseProblems,
             weakTopics,
             revisionTopics,
