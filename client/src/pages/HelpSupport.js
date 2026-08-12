@@ -9,6 +9,32 @@ import {
 } from 'lucide-react';
 import logoIcon from '../assets/branding/logo-icon.png';
 
+const GithubIcon = ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.34.96.1-.75.4-1.25.73-1.54-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.73 0c2.18-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.74.8 1.18 1.83 1.18 3.09 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.15 0 1.55-.01 2.8-.01 3.18 0 .3.2.66.79.55A10.52 10.52 0 0 0 23.5 12c0-6.35-5.15-11.5-11.5-11.5z" />
+    </svg>
+);
+
+const LinkedinIcon = ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.86 0-2.15 1.45-2.15 2.94v5.66H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
+    </svg>
+);
+
+const InstagramIcon = ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+);
+
+const TwitterIcon = ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+);
+
 const ARTICLES = [
     { q: 'How is Weak Topic calculated?', a: 'Each topic gets a "mastery score" from its solved problems — Easy problems add 1 point, Medium adds 2, and Hard adds 3. If a topic\'s total score is below 7, it\'s marked "weak" and becomes a focus area for your AI Study Plan.' },
     { q: 'How does AI Study Plan work?', a: 'It looks at your weak topics and generates a day-by-day plan (3/7/14 days) with concepts to revise and problems to solve, powered by Gemini. Up to 2 generations per day.' },
@@ -218,13 +244,33 @@ const HelpSupport = () => {
                 </button>
             </div>
 
-            {/* Footer */}
-            <footer className="mt-8 pt-6 border-t border-surface-border flex items-center justify-between flex-wrap gap-4">
-                <div className="flex items-center gap-2">
-                    <img src={logoIcon} alt="" className="w-7 h-7 rounded-lg object-contain" />
-                    <span className="text-text font-bold text-sm">CodePulse</span>
+            {/* Footer — matches Landing page's "Get in Touch" footer, light-themed to match this page's topbar */}
+            <footer className="mt-8">
+                <div className="rounded-2xl p-6 md:p-10" style={{ backgroundColor: '#D8E3F3' }}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center pb-8 border-b border-black/10">
+                        <div>
+                            <h2 className="text-2xl font-bold text-text mb-3">Get in Touch</h2>
+                            <p className="text-text-muted text-sm leading-relaxed max-w-sm mb-5">
+                                Have questions, feedback, or just want to say hi? We'd love to hear from you.
+                                Reach out through any of the channels below.
+                            </p>
+                            <div className="flex gap-3">
+                                <a href="https://github.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white border border-surface-border flex items-center justify-center text-text-muted hover:text-brand hover:border-brand/40 transition"><GithubIcon size={16} /></a>
+                                <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white border border-surface-border flex items-center justify-center text-text-muted hover:text-brand hover:border-brand/40 transition"><LinkedinIcon size={16} /></a>
+                                <a href="https://twitter.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white border border-surface-border flex items-center justify-center text-text-muted hover:text-brand hover:border-brand/40 transition"><TwitterIcon size={16} /></a>
+                                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white border border-surface-border flex items-center justify-center text-text-muted hover:text-brand hover:border-brand/40 transition"><InstagramIcon size={16} /></a>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4">
+                            <button onClick={() => openModalOrRequireLogin('contact')} className="bg-white border border-surface-border rounded-xl p-5 text-left hover:-translate-y-0.5 hover:shadow-md transition">
+                                <div className="w-9 h-9 rounded-lg bg-brand/10 flex items-center justify-center mb-3 text-brand"><Mail size={17} /></div>
+                                <p className="text-text-muted text-[10px] font-bold uppercase tracking-wide mb-1">Email</p>
+                                <p className="text-text text-sm font-semibold">support.codepulse@gmail.com</p>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <p className="text-text-muted text-xs">© 2026 CodePulse. All rights reserved.</p>
             </footer>
 
             {/* ===== Modals ===== */}
@@ -236,7 +282,7 @@ const HelpSupport = () => {
                         <p><strong className="text-text">2. Log Problems</strong> — On the Problems page, record each problem you solve with its difficulty and topic.</p>
                         <p><strong className="text-text">3. Set a Daily Goal</strong> — Track a daily problem-solving target from the Daily Goal page.</p>
                         <p><strong className="text-text">4. Generate an AI Study Plan</strong> — Once you have a few topics logged, get a personalized plan based on your weak areas.</p>
-                        <p><strong className="text-text">5. Check your Dashboard</strong> — See your progress, streaks, and weak topics at a glance.</p>
+                       <p><strong className="text-text">5. Check your Dashboard</strong> — See your progress, streaks, and weak topics at a glance.</p>
                     </div>
                 </Modal>
             )}
