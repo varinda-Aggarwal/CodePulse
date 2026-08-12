@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 import {
     Code2, BookOpen, BrainCircuit, LineChart, Target, Rocket,
-    ArrowRight, UserCircle, LogOut
+    ArrowRight, UserCircle, LogOut, Mail
 } from 'lucide-react';
 import logoIcon from '../assets/branding/logo-icon.png';
 import logoText from '../assets/branding/logo-text.png';
@@ -557,28 +557,119 @@ const LANDING_CSS = `
 .cp-cta-right small { display: block; margin-top: 8px; color: rgba(255,255,255,0.45); font-size: 11.5px; }
 
 /* Footer */
-.cp-footer {
+.cp-footer-wrap {
     position: relative; z-index: 1;
-    border-top: 1px solid rgba(255,255,255,0.07);
-    padding: 32px 48px;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 16px;
+    max-width: 1280px; margin: 0 auto;
+    padding: 70px 48px 40px;
 }
+
+.cp-footer-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    padding-bottom: 44px;
+}
+
+.cp-footer-heading {
+    font-size: clamp(1.7rem, 2.4vw, 2.1rem);
+    font-weight: 750;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+}
+
+.cp-footer-desc {
+    color: rgba(255,255,255,0.55);
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 380px;
+    margin: 0 0 22px;
+}
+
+.cp-footer-social { display: flex; gap: 12px; }
+.cp-footer-social a {
+    width: 36px; height: 36px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.1);
+    display: grid; place-items: center;
+    color: rgba(255,255,255,0.6);
+    transition: color .2s, border-color .2s, background .2s;
+}
+.cp-footer-social a:hover {
+    color: #fff;
+    border-color: rgba(122,89,255,0.4);
+    background: rgba(122,89,255,0.1);
+}
+
+.cp-footer-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.cp-footer-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 22px;
+    text-decoration: none;
+    transition: transform .2s, border-color .2s, background .2s;
+    display: block;
+}
+.cp-footer-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(122,89,255,0.35);
+    background: rgba(255,255,255,0.05);
+}
+
+.cp-footer-card-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: rgba(122,89,255,0.15);
+    display: grid; place-items: center;
+    margin-bottom: 14px;
+}
+
+.cp-footer-card p:first-of-type {
+    color: rgba(255,255,255,0.45);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0 0 4px;
+}
+
+.cp-footer-card p:last-of-type {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.cp-footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+}
+
 .cp-footer-links { display: flex; gap: 26px; }
 .cp-footer-links button {
     background: none; border: none; color: rgba(255,255,255,0.55);
     font-size: 13.5px; cursor: pointer; transition: color .2s;
 }
 .cp-footer-links button:hover { color: #fff; }
-.cp-footer-social { display: flex; gap: 14px; }
-.cp-footer-social a {
-    width: 34px; height: 34px; border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.1);
-    display: grid; place-items: center;
-    color: rgba(255,255,255,0.6);
-    transition: color .2s, border-color .2s;
+
+.cp-footer-copy {
+    color: rgba(255,255,255,0.4);
+    font-size: 12.5px;
 }
-.cp-footer-social a:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+@media (max-width: 768px) {
+    .cp-footer-top { grid-template-columns: 1fr; }
+    .cp-footer-cards { grid-template-columns: 1fr; }
+}
 
 @media (max-width: 1024px) {
     .cp-nav-links { display: none; }
@@ -774,21 +865,29 @@ const Landing = () => {
             </section>
 
             {/* Footer */}
-            <footer className="cp-footer">
-                <div className="cp-nav-logo">
-                    <img src={logoIcon} alt="" className="cp-nav-logo-icon" />
-                    <span className="cp-nav-logo-text">Code<span className="accent">Pulse</span></span>
-                </div>
-                <div className="cp-footer-links">
-                    {NAV_LINKS.map((l) => (
-                        <button key={l.id} onClick={() => scrollTo(l.id)}>{l.label}</button>
-                    ))}
-                </div>
-                <div className="cp-footer-social">
-                    <a href="https://github.com" target="_blank" rel="noreferrer"><GithubIcon size={16} /></a>
-                    <a href="https://linkedin.com" target="_blank" rel="noreferrer"><LinkedinIcon size={16} /></a>
-                    <a href="https://twitter.com" target="_blank" rel="noreferrer"><TwitterIcon size={16} /></a>
-                    <a href="https://instagram.com" target="_blank" rel="noreferrer"><InstagramIcon size={16} /></a>
+            <footer className="cp-footer-wrap">
+                <div className="cp-footer-top">
+                    <div>
+                        <h2 className="cp-footer-heading">Get in Touch</h2>
+                        <p className="cp-footer-desc">
+                            Have questions, feedback, or just want to say hi? We'd love to hear from you.
+                            Reach out through any of the channels below.
+                        </p>
+                        <div className="cp-footer-social">
+                            <a href="https://github.com" target="_blank" rel="noreferrer"><GithubIcon size={16} /></a>
+                            <a href="https://linkedin.com" target="_blank" rel="noreferrer"><LinkedinIcon size={16} /></a>
+                            <a href="https://twitter.com" target="_blank" rel="noreferrer"><TwitterIcon size={16} /></a>
+                            <a href="https://instagram.com" target="_blank" rel="noreferrer"><InstagramIcon size={16} /></a>
+                        </div>
+                    </div>
+
+                    <div className="cp-footer-cards">
+                        <button onClick={() => scrollTo('contact')} className="cp-footer-card" style={{ textAlign: 'left', border: 'none', width: '100%', cursor: 'pointer' }}>
+                            <div className="cp-footer-card-icon"><Mail size={18} color="#B3A2FF" /></div>
+                            <p>Email</p>
+                            <p>support.codepulse@gmail.com</p>
+                        </button>
+                    </div>
                 </div>
             </footer>
         </div>
