@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 import {
     Code2, BookOpen, BrainCircuit, LineChart, Target, Rocket,
-    ArrowRight, UserCircle, LogOut, Mail
+    ArrowRight, UserCircle, LogOut, Mail, Menu, X
 } from 'lucide-react';
 import logoIcon from '../assets/branding/logo-icon.png';
 import logoText from '../assets/branding/logo-text.png';
@@ -377,11 +377,8 @@ const LANDING_CSS = `
 
 .cp-dashboard-preview-img {
     border-radius: 24px;
-}
-
-.cp-dashboard-preview-img {
-    width: 700px;                
-    max-width: none;
+    width: 100%;
+    max-width: 700px;
     height: auto;
     display: block;
 }
@@ -675,6 +672,13 @@ const LANDING_CSS = `
     .cp-nav-links { display: none; }
     .cp-hero { min-height: auto; }
     .cp-hero-text { max-width: 100%; }
+    .cp-hero-laptop-wrap {
+        position: relative;
+        top: auto;
+        right: auto;
+        transform: none;
+        width: 100%;
+    }
     .cp-hero-laptop-img {
         position: static;
         transform: none;
@@ -683,8 +687,68 @@ const LANDING_CSS = `
     }
     .cp-features { grid-template-columns: repeat(2, 1fr); }
     .cp-hiw-steps { grid-template-columns: 1fr; }
+    .cp-hiw-step:not(:last-child)::after { display: none; }
     .cp-why { grid-template-columns: 1fr; padding: 36px; }
 }
+.cp-nav-mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.cp-mobile-menu {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .cp-nav-mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .cp-mobile-menu {
+        display: flex;
+        flex-direction: column;
+        background: rgba(11,6,32,0.97);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        padding: 8px 20px 16px;
+    }
+    .cp-mobile-menu button {
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.8);
+        font-size: 15px;
+        font-weight: 600;
+        text-align: left;
+        padding: 12px 4px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        cursor: pointer;
+    }
+    .cp-mobile-menu button:last-child {
+        border-bottom: none;
+    }
+    .cp-mobile-menu-auth {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .cp-mobile-menu-auth .cp-btn-outline,
+    .cp-mobile-menu-auth .cp-btn-fill {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 767px) {
+    .cp-nav-auth-buttons { display: none; }
+}
+
 @media (max-width: 640px) {
     .cp-nav { padding: 14px 20px; }
     .cp-hero { padding: 40px 20px 60px; }
@@ -693,7 +757,8 @@ const LANDING_CSS = `
     .cp-hiw { padding: 0 20px 60px; }
     .cp-why { margin: 0 20px 60px; }
     .cp-cta { padding: 0 20px; }
-    .cp-footer { padding: 24px 20px; flex-direction: column; }
+    .cp-cta-inner { padding: 28px 24px; }
+    .cp-footer-wrap { padding: 40px 20px 24px; }
 }
 `;
 
@@ -707,6 +772,7 @@ const Landing = () => {
     const navigate = useNavigate();
     const { token, user, logout } = useAuth();
     const [imgError, setImgError] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
@@ -714,6 +780,7 @@ const Landing = () => {
     };
 
     const scrollTo = (id) => {
+        setMobileMenuOpen(false);
         if (id === 'contact') {
             navigate('/help');
             return;
@@ -756,13 +823,33 @@ const Landing = () => {
                             </button>
                         </>
                     ) : (
-                        <>
+                        <div className="cp-nav-auth-buttons">
                             <button className="cp-btn-outline" onClick={() => navigate('/login')}>Log In</button>
                             <button className="cp-btn-fill" onClick={() => navigate('/register')}>Get Started</button>
-                        </>
+                        </div>
                     )}
+                    <button
+                        className="cp-nav-mobile-toggle"
+                        onClick={() => setMobileMenuOpen((prev) => !prev)}
+                        aria-label="Toggle menu"
+                    >
+                        {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+                    </button>
                 </div>
             </nav>
+            {mobileMenuOpen && (
+                <div className="cp-mobile-menu">
+                    {NAV_LINKS.map((l) => (
+                        <button key={l.id} onClick={() => scrollTo(l.id)}>{l.label}</button>
+                    ))}
+                    {!token && (
+                        <div className="cp-mobile-menu-auth">
+                            <button className="cp-btn-outline" onClick={() => { setMobileMenuOpen(false); navigate('/login'); }}>Log In</button>
+                            <button className="cp-btn-fill" onClick={() => { setMobileMenuOpen(false); navigate('/register'); }}>Get Started</button>
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Hero */}
             <section className="cp-hero" id="hero">
@@ -876,8 +963,6 @@ const Landing = () => {
                         <div className="cp-footer-social">
                             <a href="https://github.com" target="_blank" rel="noreferrer"><GithubIcon size={16} /></a>
                             <a href="https://linkedin.com" target="_blank" rel="noreferrer"><LinkedinIcon size={16} /></a>
-                            <a href="https://twitter.com" target="_blank" rel="noreferrer"><TwitterIcon size={16} /></a>
-                            <a href="https://instagram.com" target="_blank" rel="noreferrer"><InstagramIcon size={16} /></a>
                         </div>
                     </div>
 
