@@ -32,7 +32,7 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 px-10 py-4 flex justify-between items-center shadow-md transition-colors">
+        <nav className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 px-4 sm:px-6 lg:px-10 py-3 sm:py-4 flex justify-between items-center shadow-md transition-colors">
         <Link
             to="/dashboard"
             className="flex items-center gap-2 hover:opacity-90 transition"
@@ -40,17 +40,17 @@ const Navbar = () => {
         <img
             src={logoIcon}
             alt="CodePulse Icon"
-            className="h-10 w-10"
+            className="h-8 w-8 sm:h-10 sm:w-10"
         />
 
         <img
             src={logoText}
             alt="CodePulse"
-            className="h-6 w-auto"
+            className="h-5 sm:h-6 w-auto"
         />
         </Link>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
                 <button
                     onClick={toggleTheme}
                     className="text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition"

@@ -41,37 +41,53 @@ const navGroups = [
     },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ mobileOpen, onClose }) => {
     const location = useLocation();
     const { user } = useAuth();
     const [collapsed, setCollapsed] = useState(false);
     const [imgError, setImgError] = useState(false);
 
     return (
-        <aside
-            className={`${collapsed ? 'w-20' : 'w-64'} bg-surface-sidebar h-screen sticky top-0 flex flex-col transition-all duration-200 flex-shrink-0`}
-        >
+        <>
+            {/* Mobile/tablet backdrop — click to close */}
+            {mobileOpen && (
+                <div
+                    onClick={onClose}
+                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                />
+            )}
+            <aside
+                className={`fixed inset-y-0 left-0 z-50 w-64 ${collapsed ? 'lg:w-20' : 'lg:w-64'} bg-surface-sidebar h-screen flex flex-col transition-all duration-200 flex-shrink-0 transform ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:sticky lg:top-0`}
+            >
             {/* Top: Logo + Collapse toggle (fixed, no scroll) */}
             <div className="relative flex items-center justify-center py-5 flex-shrink-0 px-4">
-                <Link to="/dashboard" className="flex items-center gap-2.5">
+                <Link to="/dashboard" className="flex items-center gap-2.5" onClick={onClose}>
                     <img src={logoIcon} alt="CodePulse" className="h-9 w-9 flex-shrink-0" />
                     {!collapsed && (
                         <span className="text-white text-lg font-bold tracking-tight">CodePulse</span>
                     )}
                 </Link>
+                {/* Desktop collapse toggle */}
                 {!collapsed && (
                     <button
                         onClick={() => setCollapsed(true)}
-                        className="absolute right-4 text-slate-400 hover:text-white hover:bg-[#8094B3]/30 rounded-lg transition p-1"
+                        className="hidden lg:block absolute right-4 text-slate-400 hover:text-white hover:bg-[#8094B3]/30 rounded-lg transition p-1"
                     >
                         <ChevronsLeft size={18} />
                     </button>
                 )}
+                {/* Mobile/tablet close button */}
+                <button
+                    onClick={onClose}
+                    className="lg:hidden absolute right-4 text-slate-400 hover:text-white hover:bg-[#8094B3]/30 rounded-lg transition p-1"
+                >
+                    <ChevronsLeft size={18} />
+                </button>
             </div>
             {collapsed && (
                 <button
                     onClick={() => setCollapsed(false)}
-                    className="flex justify-center text-slate-400 hover:text-white transition py-1"
+                    className="hidden lg:flex justify-center text-slate-400 hover:text-white transition py-1"
                 >
                     <ChevronsRight size={18} />
                 </button>
@@ -117,6 +133,7 @@ const Sidebar = () => {
                                 <Link
                             key={label}
                             to={to}
+                            onClick={onClose}
                             title={collapsed ? label : ''}
                             className={`flex items-center gap-3 py-2.5 rounded-xl transition text-sm font-medium border-l-4
                                 ${collapsed ? 'justify-center px-3' : 'px-3'}
@@ -138,6 +155,7 @@ const Sidebar = () => {
             <div className="px-3 py-4 border-t border-white/10 flex-shrink-0">
                 <Link
                     to="/help"
+                    onClick={onClose}
                     title={collapsed ? 'Help & Support' : ''}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-[#8094B3]/30 hover:text-white transition ${collapsed ? 'justify-center' : ''}`}
                 >
@@ -145,7 +163,8 @@ const Sidebar = () => {
                     {!collapsed && 'Help & Support'}
                 </Link>
             </div>
-        </aside>
+            </aside>
+        </>
     );
 };
 
