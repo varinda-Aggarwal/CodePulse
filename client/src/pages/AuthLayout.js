@@ -527,14 +527,18 @@ const AUTH_LAYOUT_CSS = `
 
 @media (max-width: 640px) {
     .codepulse-auth-panel {
-        width: 48%;   /* right side */
-        margin-left: auto;
+        width: 100%;
+        margin-left: 0;
         padding-inline: 1.25rem;
     }
 
     .cp-theme-toggle {
         right: 20px;
         top: 20px;
+    }
+
+    .cp-auth-content {
+        padding-top: 44px;
     }
 }
 `;
