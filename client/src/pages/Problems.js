@@ -311,24 +311,26 @@ const Problems = () => {
                         className="w-full bg-[#EAECF1] text-text pl-9 pr-3 py-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition"
                     />
                 </div>
-                <select
-                    value={filterDifficulty}
-                    onChange={(e) => setFilterDifficulty(e.target.value)}
-                    className="bg-surface-bg text-text px-2 py-2 rounded-lg border border-surface-border text-sm w-32 flex-shrink-0"
-                >
-                    <option value="">All Difficulty</option>
-                    <option>Easy</option>
-                    <option>Medium</option>
-                    <option>Hard</option>
-                </select>
-                <select
-                    value={sortBy}
-                    onChange={(e) => handleSortChange(e.target.value)}
-                    className="bg-surface-bg text-text px-2 py-2 rounded-lg border border-surface-border text-sm w-32 flex-shrink-0"
-                >
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                </select>
+                <div className="flex gap-3 min-w-0">
+                    <select
+                        value={filterDifficulty}
+                        onChange={(e) => setFilterDifficulty(e.target.value)}
+                        className="flex-1 min-w-0 md:flex-shrink-0 md:w-32 bg-surface-bg text-text px-2 py-2 rounded-lg border border-surface-border text-sm"
+                    >
+                        <option value="">All Difficulty</option>
+                        <option>Easy</option>
+                        <option>Medium</option>
+                        <option>Hard</option>
+                    </select>
+                    <select
+                        value={sortBy}
+                        onChange={(e) => handleSortChange(e.target.value)}
+                        className="flex-1 min-w-0 md:flex-shrink-0 md:w-32 bg-surface-bg text-text px-2 py-2 rounded-lg border border-surface-border text-sm"
+                    >
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                    </select>
+                </div>
                 <button
                     onClick={handleSearch}
                     className="bg-[#E0E3EB] hover:bg-[#CDD1DE] text-text px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"

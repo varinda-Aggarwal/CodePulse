@@ -219,27 +219,29 @@ const Topics = () => {
                         className="w-full bg-[#EAECF1] text-text pl-9 pr-3 py-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition"
                     />
                 </div>
-                <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="bg-[#EAECF1] text-text px-2 py-2 rounded-lg border border-surface-border text-sm tracking-tight w-28 flex-shrink-0"
-                >
-                    <option value="all">All Status</option>
-                    <option value="Not Started">Not Started</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Done">Done</option>
-                    <option value="Revision">Needs Revision</option>
-                </select>
-                <select
-                    value={sortBy}
-                    onChange={(e) => handleSortChange(e.target.value)}
-                    className="bg-[#EAECF1] text-text px-2 py-2 rounded-lg border border-surface-border text-sm tracking-tight w-28 flex-shrink-0"
-                >
-                    <option value="latest">Latest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="name">Name (A-Z)</option>
-                    <option value="revision">Revision Marked First</option>
-                </select>
+                <div className="flex gap-3 min-w-0">
+                    <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="flex-1 min-w-0 md:flex-shrink-0 md:w-28 bg-[#EAECF1] text-text px-2 py-2 rounded-lg border border-surface-border text-sm tracking-tight"
+                    >
+                        <option value="all">All Status</option>
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Done">Done</option>
+                        <option value="Revision">Needs Revision</option>
+                    </select>
+                    <select
+                        value={sortBy}
+                        onChange={(e) => handleSortChange(e.target.value)}
+                        className="flex-1 min-w-0 md:flex-shrink-0 md:w-28 bg-[#EAECF1] text-text px-2 py-2 rounded-lg border border-surface-border text-sm tracking-tight"
+                    >
+                        <option value="latest">Latest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="name">Name (A-Z)</option>
+                        <option value="revision">Revision Marked First</option>
+                    </select>
+                </div>
                 <button
                     onClick={handleSearch}
                     className="bg-brand hover:bg-brand-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"
