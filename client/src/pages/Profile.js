@@ -228,7 +228,7 @@ const Profile = () => {
 
             {/* Profile Header */}
             <div className={`${cardClass} p-4 mb-5 flex items-center justify-between gap-4 flex-wrap`}>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 min-w-0 flex-1">
                     <div className="relative w-16 h-16 shrink-0">
                         <img
                             src={displaySrc}
@@ -247,11 +247,11 @@ const Profile = () => {
                         )}
                     </div>
 
-                    <div>
-                        <h2 className="text-text font-bold text-lg">
+                    <div className="min-w-0">
+                        <h2 className="text-text font-bold text-lg truncate">
                             {profile?.firstName} {profile?.lastName}
                         </h2>
-                        <p className="text-text-muted text-sm">{profile?.email}</p>
+                        <p className="text-text-muted text-sm truncate">{profile?.email}</p>
                         <p className="text-text-muted text-xs mt-0.5">
                             Member since {new Date(profile?.joinedDate).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
                         </p>
@@ -505,7 +505,7 @@ const Profile = () => {
             {/* Crop Modal */}
             {showCropModal && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-surface-card border border-surface-border rounded-2xl p-6 w-full max-w-lg shadow-xl">
+                    <div className="bg-surface-card border border-surface-border rounded-2xl p-6 w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
                         <h3 className="text-text font-bold text-lg mb-3">Adjust Your Photo</h3>
 
                         <div className="relative w-full h-80 bg-surface-bg rounded-lg overflow-hidden">

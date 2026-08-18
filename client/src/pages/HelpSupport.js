@@ -257,8 +257,6 @@ const HelpSupport = () => {
                             <div className="flex gap-3">
                                 <a href="https://github.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white border border-surface-border flex items-center justify-center text-text-muted hover:text-brand hover:border-brand/40 transition"><GithubIcon size={16} /></a>
                                 <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white border border-surface-border flex items-center justify-center text-text-muted hover:text-brand hover:border-brand/40 transition"><LinkedinIcon size={16} /></a>
-                                <a href="https://twitter.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white border border-surface-border flex items-center justify-center text-text-muted hover:text-brand hover:border-brand/40 transition"><TwitterIcon size={16} /></a>
-                                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white border border-surface-border flex items-center justify-center text-text-muted hover:text-brand hover:border-brand/40 transition"><InstagramIcon size={16} /></a>
                             </div>
                         </div>
 
@@ -330,7 +328,7 @@ const HelpSupport = () => {
                         </div>
                         <div>
                             <label className="block text-text-muted text-sm mb-2">Priority</label>
-                            <div className="flex gap-4">
+                            <div className="flex flex-wrap gap-4">
                                 {['Low', 'Medium', 'High'].map((p) => (
                                     <label key={p} className="flex items-center gap-2 text-text text-sm cursor-pointer">
                                         <input
