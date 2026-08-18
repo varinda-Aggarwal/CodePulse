@@ -190,7 +190,7 @@ const TopicProblems = () => {
                             <h3 className="text-text font-bold mb-2">Edit Problem</h3>
                             <input type="text" placeholder="Problem name *" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full bg-surface-bg text-text p-3 rounded-lg border border-surface-border" required />
                             <input type="url" placeholder="Problem link *" value={formData.link} onChange={(e) => setFormData({ ...formData, link: e.target.value })} className="w-full bg-surface-bg text-text p-3 rounded-lg border border-surface-border" required />
-                            <div className="flex gap-3">
+                            <div className="flex flex-col sm:flex-row gap-3">
                                 <select value={formData.difficulty} onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })} className="bg-surface-bg text-text p-3 rounded-lg border border-surface-border flex-1">
                                     <option>Easy</option><option>Medium</option><option>Hard</option>
                                 </select>
