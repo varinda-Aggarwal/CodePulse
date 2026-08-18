@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, sendOtp, verifyOtp, forgotPassword, resetPassword } = require('../controllers/authController');
-const { validateRegister, validateLogin, validateSendOtp, validateVerifyOtp, validateForgotPassword, validateResetPassword } = require('../middleware/validate');
+const { loginUser, sendOtp, verifyOtp, forgotPassword, resetPassword } = require('../controllers/authController');
+const { validateLogin, validateSendOtp, validateVerifyOtp, validateForgotPassword, validateResetPassword } = require('../middleware/validate');
 const { loginLimiter, otpLimiter, forgotPasswordLimiter } = require('../middleware/rateLimiter');
 const passport = require('../config/passport');
 const jwt = require('jsonwebtoken');
 
-router.post('/register', validateRegister, registerUser);
 router.post('/login', loginLimiter, validateLogin, loginUser);
 router.post('/send-otp', otpLimiter, validateSendOtp, sendOtp);
 router.post('/verify-otp', otpLimiter, validateVerifyOtp, verifyOtp);
