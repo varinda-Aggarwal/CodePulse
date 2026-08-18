@@ -147,7 +147,7 @@ const Dashboard = () => {
             </div>
 
             {/* Stat Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
                 {statCards.map((card) => (
                     <div key={card.label} className="bg-surface-card border border-surface-border p-5 rounded-2xl shadow-md  hover:shadow-lg  hover:border-[#AECDEA]  hover:shadow-lg  hover:-translate-y-1  transition-all duration-300 hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center text-center gap-2 min-h-[120px]">
                         <div className="flex items-center gap-1.5 text-sm font-semibold">
@@ -192,17 +192,18 @@ const Dashboard = () => {
                     </div>
                 </div>
             ) : (
-                <div className="bg-surface-card border border-surface-border p-5 rounded-2xl shadow-md  hover:shadow-lg  hover:border-[#AECDEA]  hover:shadow-lg  hover:-translate-y-1  transition-all duration-300 hover:-translate-y-0.5 transition-all duration-200 mb-6 flex gap-4 items-center">
-                    <div className="h-10 w-10 rounded-lg bg-brand/15 flex items-center justify-center flex-shrink-0">
-                        <Brain size={20} className="text-brand" />
+                <div className="bg-surface-card border border-surface-border p-5 rounded-2xl shadow-md  hover:shadow-lg  hover:border-[#AECDEA]  hover:shadow-lg  hover:-translate-y-1  transition-all duration-300 hover:-translate-y-0.5 transition-all duration-200 mb-6 flex flex-col sm:flex-row gap-4 sm:items-center">
+                    <div className="flex items-center gap-4 flex-1">
+                        <div className="h-10 w-10 rounded-lg bg-brand/15 flex items-center justify-center flex-shrink-0">
+                            <Brain size={20} className="text-brand" />
+                        </div>
+                        <div className="flex-1">
+                            <h2 className="text-text font-bold mb-0.5">AI Study Plan</h2>
+                            <p className="text-text-muted text-sm">No plan generated today.</p>
+                        </div>
                     </div>
-                    <div className="flex-1">
-                        <h2 className="text-text font-bold mb-0.5">AI Study Plan</h2>
-                        <p className="text-text-muted text-sm">No plan generated today.</p>
-                    </div>
-                    
                        <a href="/study-plan"
-                        className="inline-flex items-center gap-1.5 bg-brand text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-brand-hover transition flex-shrink-0"
+                        className="inline-flex items-center justify-center gap-1.5 bg-brand text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-brand-hover transition flex-shrink-0 w-full sm:w-auto"
                        >
                         Generate Now <ArrowRight size={14} />
                     </a>
@@ -385,12 +386,12 @@ const Dashboard = () => {
                 {recentProblems.length > 0 ? (
                     <div className="flex flex-col divide-y divide-surface-border">
                     {recentProblems.map((p) => (
-                        <div key={p._id} className="grid grid-cols-3 items-center py-3 text-sm"
+                        <div key={p._id} className="grid grid-cols-3 items-center py-3 text-sm gap-2"
                     >
-                    <span className="font-medium text-text flex items-center gap-2">
-                        {p.name}
+                    <span className="font-medium text-text flex items-center gap-2 min-w-0">
+                        <span className="truncate">{p.name}</span>
                         {p.needsRevision && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-warning-light text-warning-text">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-warning-light text-warning-text flex-shrink-0">
                                 Revision
                             </span>
                         )}
