@@ -207,7 +207,7 @@ const AIStudyPlan = () => {
 
                 <div className="flex justify-end">
                     {plan && isViewingToday ? (
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 flex-wrap justify-end">
                             <span className="text-text-muted text-xs">{generationCount}/2 generations used today</span>
                             <button
                                 onClick={() => handleGenerate(true)}
@@ -291,13 +291,13 @@ const AIStudyPlan = () => {
                                                     onClick={() => toggleTask(t.id)}
                                                     className="w-full flex items-center justify-between gap-3 py-1.5 px-2.5 rounded-lg border border-surface-border hover:bg-surface-bg transition text-left"
                                                 >
-                                                    <div className="flex items-center gap-2.5">
+                                                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
                                                         {checkedTasks[t.id]
                                                             ? <CheckCircle2 size={16} className="text-success shrink-0" />
                                                             : <Circle size={16} className="text-text-muted/40 shrink-0" />}
-                                                        <span className="flex items-baseline gap-2">
-                                                            <span className="text-text-muted text-[10px] font-semibold uppercase tracking-wide">{t.type}</span>
-                                                            <span className={`text-sm font-medium ${checkedTasks[t.id] ? 'text-text-muted line-through' : 'text-text'}`}>
+                                                        <span className="flex items-baseline gap-2 min-w-0">
+                                                            <span className="text-text-muted text-[10px] font-semibold uppercase tracking-wide shrink-0">{t.type}</span>
+                                                            <span className={`text-sm font-medium truncate ${checkedTasks[t.id] ? 'text-text-muted line-through' : 'text-text'}`}>
                                                                 {t.label}
                                                             </span>
                                                         </span>

@@ -203,12 +203,15 @@ const DailyGoal = () => {
                     <p className="text-text-muted text-center py-8">Loading calendar...</p>
                 ) : (
                     <>
-                        <div className="grid grid-cols-7 gap-2 mb-2.5 w-[90%] mx-auto">
+                        <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2.5 w-full sm:w-[90%] mx-auto">
                             {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((d) => (
-                                <div key={d} className="text-text-muted text-xs text-center font-semibold">{d}</div>
+                                <div key={d} className="text-text-muted text-[10px] sm:text-xs text-center font-semibold">
+                                    <span className="sm:hidden">{d.slice(0, 3)}</span>
+                                    <span className="hidden sm:inline">{d}</span>
+                                </div>
                             ))}
                         </div>
-                        <div className="grid grid-cols-7 gap-2 w-[88%] mx-auto">
+                        <div className="grid grid-cols-7 gap-1 sm:gap-2 w-full sm:w-[88%] mx-auto">
                             {calendarDays.map((dayObj, idx) => {
                                 if (!dayObj) return <div key={idx} className="aspect-square" />;
 
@@ -234,11 +237,11 @@ const DailyGoal = () => {
                                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bgColor)}
                                         className="aspect-square rounded-md flex flex-col items-center justify-center gap-0.5 transition-colors"
                                     >
-                                        <span className={`text-2xl font-bold ${isToday ? 'text-brand' : 'text-text'}`}>
+                                        <span className={`text-base sm:text-2xl font-bold ${isToday ? 'text-brand' : 'text-text'}`}>
                                             {dayObj.day}
                                         </span>
                                         {!isFuture && (
-                                            <span className={`text-[10px] font-medium ${hasTarget ? 'text-text-muted' : 'text-text-muted/50'}`}>
+                                            <span className={`text-[8px] sm:text-[10px] font-medium leading-none truncate px-0.5 ${hasTarget ? 'text-text-muted' : 'text-text-muted/50'}`}>
                                                 {hasTarget ? `${entry.achieved}/${entry.target}` : 'No Goal'}
                                             </span>
                                         )}
@@ -259,7 +262,7 @@ const DailyGoal = () => {
             </div>
 
             {/* Monthly Summary */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div className={`${cardClass} p-5 flex flex-col items-center text-center`}>
                     <span className="flex items-center gap-1.5 text-brand font-semibold text-sm">
                         <BarChart3 size={16} /> Problems Solved
