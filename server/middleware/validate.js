@@ -8,21 +8,6 @@ const handleValidationErrors = (req, res, next) => {
     next();
 };
 
-const validateRegister = [
-    body('username')
-        .trim()
-        .notEmpty().withMessage('Username is required')
-        .isLength({ min: 3 }).withMessage('Username must be at least 3 characters'),
-    body('email')
-        .trim()
-        .notEmpty().withMessage('Email is required')
-        .isEmail().withMessage('Please enter a valid email'),
-    body('password')
-        .notEmpty().withMessage('Password is required')
-        .isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-    handleValidationErrors
-];
-
 const validateSendOtp = [
     body('username')
         .trim()
@@ -129,4 +114,4 @@ const validateProblem = [
     handleValidationErrors
 ];
 
-module.exports = { validateRegister, validateLogin, validateTopic, validateProblem, validateSendOtp, validateVerifyOtp, validateProfileUpdate, validateForgotPassword, validateResetPassword };
+module.exports = { validateLogin, validateTopic, validateProblem, validateSendOtp, validateVerifyOtp, validateProfileUpdate, validateForgotPassword, validateResetPassword };
