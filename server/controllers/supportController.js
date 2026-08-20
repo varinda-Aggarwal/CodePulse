@@ -3,9 +3,11 @@ const sendSupportEmail = require('../utils/sendSupportEmail');
 
 const submitContact = async (req, res) => {
     try {
-        const { name, email, subject, message } = req.body;
+        const { subject, message } = req.body;
+        const name = req.user.username;
+        const email = req.user.email;
         const ticket = await SupportTicket.create({
-            user: req.user?._id,
+            user: req.user._id,
             type: 'contact',
             name, email, subject, message
         });
@@ -20,7 +22,7 @@ const submitBugReport = async (req, res) => {
     try {
         const { subject, message, category, priority } = req.body;
         const ticket = await SupportTicket.create({
-            user: req.user?._id,
+            user: req.user._id,
             type: 'bug',
             name: req.user?.username,
             email: req.user?.email,
@@ -40,7 +42,7 @@ const submitFeatureRequest = async (req, res) => {
     try {
         const { subject, message } = req.body;
         const ticket = await SupportTicket.create({
-            user: req.user?._id,
+            user: req.user._id,
             type: 'feature',
             name: req.user?.username,
             email: req.user?.email,
