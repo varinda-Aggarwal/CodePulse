@@ -83,6 +83,10 @@ const verifyOtp = async (req, res) => {
         });
 
     } catch (error) {
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyPattern || {})[0] || 'This value';
+            return res.status(400).json({ message: `${field === 'username' ? 'Username' : 'This value'} is already taken. Please choose another.` });
+        }
         res.status(500).json({ message: error.message });
     }
 };
