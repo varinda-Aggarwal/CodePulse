@@ -44,7 +44,8 @@ const validateForgotPassword = [
     body('email')
         .trim()
         .notEmpty().withMessage('Email is required')
-        .isEmail().withMessage('Please enter a valid email'),
+        .isEmail().withMessage('Please enter a valid email')
+        .normalizeEmail(),
     handleValidationErrors
 ];
 
@@ -72,7 +73,8 @@ const validateVerifyOtp = [
     body('email')
         .trim()
         .notEmpty().withMessage('Email is required')
-        .isEmail().withMessage('Please enter a valid email'),
+        .isEmail().withMessage('Please enter a valid email')
+        .normalizeEmail(),
     body('otp')
         .trim()
         .notEmpty().withMessage('OTP is required')
@@ -84,7 +86,8 @@ const validateLogin = [
     body('email')
         .trim()
         .notEmpty().withMessage('Email is required')
-        .isEmail().withMessage('Please enter a valid email'),
+        .isEmail().withMessage('Please enter a valid email')
+        .normalizeEmail(),
     body('password')
         .notEmpty().withMessage('Password is required'),
     handleValidationErrors
