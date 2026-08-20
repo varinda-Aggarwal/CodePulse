@@ -3,6 +3,25 @@ const StudyPlan = require('../models/StudyPlan');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Gemini's Flash-tier models intermittently return 503 "high demand" errors.
+// Retry with exponential backoff (1s, 2s, 4s) before giving up — only for 503s,
+// so a genuine config/auth error still fails fast instead of wasting ~7s retrying.
+const generateWithRetry = async (model, prompt, maxRetries = 3) => {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+            return await model.generateContent(prompt);
+        } catch (error) {
+            const is503 = error.message && error.message.includes('503');
+            if (!is503 || attempt === maxRetries) {
+                throw error;
+            }
+            await sleep(1000 * Math.pow(2, attempt));
+        }
+    }
+};
+
 // Validate the AI-generated study plan structure before trusting/storing it
 const isValidStudyPlan = (data) => {
     if (!data || typeof data !== 'object') return false;
@@ -151,7 +170,7 @@ const generateStudyPlan = async (req, res) => {
         
         Return only valid JSON, no extra text.`;
 
-        const result = await model.generateContent(prompt);
+        const result = await generateWithRetry(model, prompt);
         const response = await result.response;
         const text = response.text();
 
@@ -182,6 +201,9 @@ const generateStudyPlan = async (req, res) => {
     } catch (error) {
         if (error.message && error.message.includes('quota')) {
             return res.status(429).json({ message: 'AI service rate limit reached. Please wait a minute and try again.' });
+        }
+        if (error.message && error.message.includes('503')) {
+            return res.status(503).json({ message: 'AI service is temporarily overloaded (Google Gemini outage). We retried automatically — please try again in a few minutes.' });
         }
         res.status(500).json({ message: error.message });
     }
