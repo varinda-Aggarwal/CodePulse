@@ -1,0 +1,944 @@
+{
+  "info": {
+    "_postman_id": "f258f3ba-c345-4ec2-937f-49f7a738d3a2",
+    "name": "CodePulse API",
+    "description": "CodePulse \u2014 MERN DSA interview prep & progress tracking platform. Full backend API collection covering Auth, Topics, Problems, Dashboard, Goals, Profile, Support, and AI Study Plan modules.\n\nBuilt and maintained by Varinda Aggarwal as part of the CodePulse portfolio project.\n\n**Setup:** Set `baseUrl` variable to your local server (default http://localhost:5000/api). Run Login or Verify OTP first \u2014 the token is captured automatically into the `token` variable for all other requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "56799833",
+    "_collection_link": "https://go.postman.co/collection/56799833-f258f3ba-c345-4ec2-937f-49f7a738d3a2?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const data = pm.response.json();",
+                  "    if (data.token) pm.collectionVariables.set('token', data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"your_email@example.com\",\n  \"password\": \"yourpassword\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Authenticate an existing user with email + password. Rate-limited: 5 attempts / 15 min (loginLimiter). Returns JWT token plus user profile fields (_id, username, email, firstName, lastName, photo, token).\n\n**Errors:** 400 validation, 401 invalid credentials, 429 too many attempts."
+          },
+          "response": []
+        },
+        {
+          "name": "Send OTP (Signup)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"varinda\",\n  \"email\": \"your_email@example.com\",\n  \"phone\": \"9876543210\",\n  \"password\": \"Passw0rd!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/send-otp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "send-otp"
+              ]
+            },
+            "description": "Step 1 of signup. Sends a 6-digit OTP to the given email (valid 5 min, auto-expires via MongoDB TTL). Rate-limited: 5 requests / 15 min (otpLimiter). Password must be 8+ chars with upper, lower, digit, special char (@$!%*?&#).\n\n**Errors:** 400 validation, 429 too many requests."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const data = pm.response.json();",
+                  "    if (data.token) pm.collectionVariables.set('token', data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"your_email@example.com\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-otp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "verify-otp"
+              ]
+            },
+            "description": "Step 2 of signup. Verifying the correct OTP creates the User account and returns a JWT token (no firstName/photo yet, since account is brand new). Rate-limited: 5 requests / 15 min (otpLimiter, shared with send-otp).\n\n**Errors:** 400 validation / invalid or expired OTP, 429 too many requests."
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"your_email@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            },
+            "description": "Sends a password reset link (valid 15 min) if the email exists. Always returns a generic success message regardless of whether the email exists, to avoid leaking which emails are registered. Rate-limited: 3 requests / 15 min, keyed by IP+email (forgotPasswordLimiter).\n\n**Errors:** 400 validation, 429 too many requests."
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"NewPassw0rd!\",\n  \"confirmPassword\": \"NewPassw0rd!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password/:token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password",
+                ":token"
+              ],
+              "variable": [
+                {
+                  "key": "token"
+                }
+              ]
+            },
+            "description": "Completes password reset using the token from the reset email link. Same rate limiter as Forgot Password.\n\nReplace `:token` in the URL with the actual token from the email link before sending.\n\n**Errors:** 400 validation / passwords don't match / invalid or expired token, 429 too many requests."
+          },
+          "response": []
+        },
+        {
+          "name": "Google OAuth - Start",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "google"
+              ]
+            },
+            "description": "Redirects to Google's account picker (prompt: select_account) to begin OAuth login/signup. This is a browser-redirect flow, not a typical JSON API call \u2014 open this URL directly in a browser tab to test, not via Postman's Send button."
+          },
+          "response": []
+        },
+        {
+          "name": "Google OAuth - Callback",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google/callback",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "google",
+                "callback"
+              ]
+            },
+            "description": "Google redirects here after the user picks an account. Server creates the user (if new) or logs them in (if googleId or matching email already exists), then redirects to the frontend with a token. Not directly callable \u2014 this fires automatically as part of the browser OAuth flow above."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Topics",
+      "item": [
+        {
+          "name": "Get All Topics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/topics?search=&sort=latest",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "topics"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "sort",
+                  "value": "latest"
+                }
+              ]
+            },
+            "description": "Returns the logged-in user's topics. Supports search and sort.\n\n`sort` options: latest, oldest, name, revision"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Topic",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const data = pm.response.json();",
+                  "    const id = data._id || (data.topic && data.topic._id);",
+                  "    if (id) pm.collectionVariables.set('topicId', id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dynamic Programming\",\n  \"status\": \"Not Started\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/topics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "topics"
+              ]
+            },
+            "description": "Creates a new topic for the logged-in user. Topic name must be unique per-user (case-insensitive check).\n\n**Errors:** 400 validation / duplicate name."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Topic",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dynamic Programming\",\n  \"status\": \"Done\",\n  \"needsRevision\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/topics/{{topicId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "topics",
+                "{{topicId}}"
+              ]
+            },
+            "description": "Updates a topic (name and/or status). Setting status to 'Done' auto-sets completedAt; changing away from 'Done' clears it. Ownership is checked \u2014 401 if the topic doesn't belong to the logged-in user.\n\n**Errors:** 400 validation / duplicate name on rename, 401 not owner, 404 not found.\n\nneedsRevision is not accepted on creation (POST only reads name/status), but is settable here since PUT forwards the full body unfiltered to the database update."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Topic",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/topics/{{topicId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "topics",
+                "{{topicId}}"
+              ]
+            },
+            "description": "Deletes a topic. Ownership is checked.\n\n**Errors:** 401 not owner, 404 not found."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Problems",
+      "item": [
+        {
+          "name": "Get All Problems",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/problems?search=&difficulty=&topic=&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "problems"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "difficulty",
+                  "value": ""
+                },
+                {
+                  "key": "topic",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Returns the logged-in user's problems with search, filtering, sorting and pagination.\n\n`sort` options: newest, oldest. Response shape: { problems, currentPage, totalPages, totalProblems }."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Problem",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const data = pm.response.json();",
+                  "    const id = data._id || (data.problem && data.problem._id);",
+                  "    if (id) pm.collectionVariables.set('problemId', id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Longest Increasing Subsequence\",\n  \"link\": \"https://leetcode.com/problems/longest-increasing-subsequence/\",\n  \"difficulty\": \"Medium\",\n  \"status\": \"Solved\",\n  \"topic\": \"{{topicId}}\",\n  \"notes\": \"Classic DP problem\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/problems",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "problems"
+              ]
+            },
+            "description": "Creates a new problem under a topic. Duplicate check is by name OR link. Setting status to 'Solved' auto-sets dateSolved to now.\n\n**Errors:** 400 validation / duplicate name-or-link.\n\nNote: approach, timeComplexity, spaceComplexity, and needsRevision exist on the Problem model but are NOT accepted at creation \u2014 the controller only reads name, link, difficulty, topic, notes, and status here. Use Update Problem (PUT) to add those fields afterward."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Problem",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Solved\",\n  \"notes\": \"Revisited and solved cleanly\",\n  \"approach\": \"O(n^2) DP with binary search optimization to O(n log n)\",\n  \"timeComplexity\": \"O(n log n)\",\n  \"spaceComplexity\": \"O(n)\",\n  \"needsRevision\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/problems/{{problemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "problems",
+                "{{problemId}}"
+              ]
+            },
+            "description": "Updates a problem. Ownership checked. Duplicate check re-runs if name is changed. dateSolved is auto-managed on status transitions (set when moving to Solved, left as-is otherwise).\n\n**Errors:** 400 validation / duplicate on rename, 401 not owner, 404 not found.\n\nUnlike POST, this route forwards the entire request body directly to the database update (no field whitelist), so approach, timeComplexity, spaceComplexity, and needsRevision are only settable here."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Problem",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/problems/{{problemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "problems",
+                "{{problemId}}"
+              ]
+            },
+            "description": "Deletes a problem. Ownership checked.\n\n**Errors:** 401 not owner, 404 not found."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard"
+              ]
+            },
+            "description": "Aggregated dashboard data: topic/problem counts, per-topic mastery scores (difficulty-weighted: Easy=1, Medium=2, Hard=3), weak topics (masteryScore < 7), topics/problems needing revision, and topics/problems added in the last 7 days.\n\nThis is the core analytics endpoint \u2014 powers the Dashboard page and feeds the weak-topic list into the AI Study Plan generator."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Goals",
+      "item": [
+        {
+          "name": "Get Today's Goal",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/goals",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "goals"
+              ]
+            },
+            "description": "Returns today's goal for the logged-in user. Auto-creates one if it doesn't exist yet, and syncs `achieved` count from problems solved today.\n\nNote: dates are stored as plain strings (YYYY-MM-DD), not a Date type."
+          },
+          "response": []
+        },
+        {
+          "name": "Set Today's Goal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"target\": 5,\n  \"date\": \"2026-01-15\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/goals",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "goals"
+              ]
+            },
+            "description": "Sets (upserts) the target problem count for a given date. One goal document per user per date (unique compound index).\n\nNote: the date field is currently accepted but IGNORED by the controller \u2014 it always reads/writes against the server-computed today's date, regardless of what date is sent here."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Goal History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/goals/history?month=08&year=2026",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "goals",
+                "history"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "08"
+                },
+                {
+                  "key": "year",
+                  "value": "2026"
+                }
+              ]
+            },
+            "description": "Returns goal history for a given month/year \u2014 powers the Daily Goal calendar view. Matched via regex on the date-string prefix."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            },
+            "description": "Returns the full profile: personal fields plus computed stats (totalProblems, totalTopics, completedTopics) and a computed `hasPassword` flag (true only if a real password is set AND the account isn't Google-linked \u2014 this field does not exist in the DB schema, it's derived at request time)."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "firstName",
+                  "value": "Varinda",
+                  "type": "text"
+                },
+                {
+                  "key": "lastName",
+                  "value": "Aggarwal",
+                  "type": "text"
+                },
+                {
+                  "key": "phone",
+                  "value": "9876543210",
+                  "type": "text"
+                },
+                {
+                  "key": "dob",
+                  "value": "2004-05-15",
+                  "type": "text"
+                },
+                {
+                  "key": "country",
+                  "value": "India",
+                  "type": "text"
+                },
+                {
+                  "key": "photo",
+                  "value": null,
+                  "type": "file"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            },
+            "description": "Partial update \u2014 only send the fields you want to change. Supports optional photo upload (multipart, field name `photo`) which is stored via Cloudinary (auto-cropped to 300x300). Phone must match 10-digit Indian format (^[6-9]\\d{9}$). dob must be ISO8601.\n\n**Errors:** 400 validation."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Profile Photo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/profile/photo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "profile",
+                "photo"
+              ]
+            },
+            "description": "Removes the current profile photo \u2014 deletes it from Cloudinary (extracts publicId from the stored URL) and clears the photo field."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Support",
+      "item": [
+        {
+          "name": "Contact Us",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"Question about study plans\",\n  \"message\": \"How often can I regenerate my AI study plan?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/contact",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "support",
+                "contact"
+              ]
+            },
+            "description": "Submits a general contact message. name/email are taken from the authenticated user (req.user), never from the request body, so submissions can't be spoofed. Triggers an email notification via nodemailer."
+          },
+          "response": []
+        },
+        {
+          "name": "Report Bug",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"Dashboard mastery score not updating\",\n  \"message\": \"Solved 3 problems but mastery score stayed the same after refresh.\",\n  \"category\": \"Backend\",\n  \"priority\": \"Medium\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/bug",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "support",
+                "bug"
+              ]
+            },
+            "description": "Submits a bug report with category and priority. name/email are taken from the authenticated user. Triggers an email notification."
+          },
+          "response": []
+        },
+        {
+          "name": "Feature Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"Dark mode toggle\",\n  \"message\": \"Would love a dark mode option in the settings.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/feature",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "support",
+                "feature"
+              ]
+            },
+            "description": "Submits a feature suggestion. name/email are taken from the authenticated user. Triggers an email notification."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "AI Study Plan",
+      "item": [
+        {
+          "name": "Generate Study Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"weakTopics\": [\n    \"Dynamic Programming\",\n    \"Graphs\"\n  ],\n  \"totalDays\": 7,\n  \"regenerate\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ai/study-plan",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ai",
+                "study-plan"
+              ]
+            },
+            "description": "Generates a personalized study plan via Gemini (gemini-flash-latest) based on the given weak topics. If a plan already exists for today and `regenerate` isn't set, the cached plan is returned. Max 2 regenerations per day.\n\n**Errors:** 400 weakTopics missing, 429 daily regeneration limit reached OR Gemini quota exhausted, 502 Gemini returned invalid/unparseable JSON.\n\n**Known issue (Aug 2026):** Google's Gemini Flash-tier models have been intermittently returning `503 Service Unavailable \u2014 This model is currently experiencing high demand` since Feb 2026, sometimes for hours at a stretch. This is a Google-side capacity issue, not a bug in this endpoint \u2014 verified: when it occurs, the backend correctly catches it and returns a clean error response rather than crashing. If you see a 503 with this message, the code is working as intended; just retry later.\n\nweakTopics is sourced from the weakTopics field returned by GET /api/dashboard \u2014 but that field returns an array of objects ({topic, masteryScore}), while this endpoint expects a plain array of topic name strings. Extract the topic field from each object before sending (e.g. dashboardResponse.weakTopics.map(t => t.topic)). This endpoint does not auto-fetch weak topics itself."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Today's Plan",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ai/study-plan/today",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ai",
+                "study-plan",
+                "today"
+              ]
+            },
+            "description": "Returns today's study plan if one exists. Returns 200 with { exists: false } if none has been generated yet (not a 404)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Plan History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ai/study-plan/history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ai",
+                "study-plan",
+                "history"
+              ]
+            },
+            "description": "Returns past study plans, most recent first. Only summary fields are returned (date, weakTopics, totalDays, createdAt) \u2014 not the full plan content."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Plan By Date",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ai/study-plan/date/2026-08-19",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ai",
+                "study-plan",
+                "date",
+                "2026-08-19"
+              ]
+            },
+            "description": "Returns the full study plan for a specific date (YYYY-MM-DD in the URL).\n\n**Errors:** 404 no plan exists for that date."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Task Progress",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2026-08-19\",\n  \"completedTasks\": [\n    \"day1-task1\",\n    \"day1-task2\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ai/study-plan/progress",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ai",
+                "study-plan",
+                "progress"
+              ]
+            },
+            "description": "Marks tasks complete/incomplete for a given day's plan by updating the completedTasks array.\n\n**Errors:** 400 date or completedTasks missing, 404 no plan exists for that date."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "topicId",
+      "value": ""
+    },
+    {
+      "key": "problemId",
+      "value": ""
+    }
+  ]
+}
