@@ -73,7 +73,6 @@ const TopicProblems = () => {
                 const { data } = await API.post('/problems', formData);
                 setProblems([data, ...problems]);
                 toast.success('Problem added!');
-                setShowAddForm(false);
             }
             setFormData({ ...emptyForm, topic: id });
         } catch (error) {
