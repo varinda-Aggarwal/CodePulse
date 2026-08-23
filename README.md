@@ -132,16 +132,17 @@ A topic is classified as **Weak** when:
 
 Mastery Score < 7
 
-Topics with no qualifying problems are not treated as weak and remain in a **Not Started** state.
+Topics with no qualifying problems are simply excluded from the weak-topics list entirely — this is independent of the topic's own status field (Not Started / In Progress / Done), which the user sets manually.
 
 #### Example
 
 | Problems                   | Calculation | Score | Status |
 | -------------------------- | ----------- | ----- | ------ |
 | 2 Easy                     | 2 × 1       | 2     | Weak   |
-| 1 Easy + 2 Medium + 1 Hard | 1 + 4 + 3   | 8     | Strong |
+| 1 Easy + 2 Medium + 1 Hard | 1 + 4 + 3   | 8     |Not Weak|
 | 3 Medium                   | 3 × 2       | 6     | Weak   |
 
+Note: 'Weak' is the only classification the system formally returns (masteryScore < 7) — 'Not Weak' above is just for illustration, not a literal API status value.
 This approach prevents topics with no activity from being incorrectly classified as weak while giving greater weight to harder problems.
 
 ---
@@ -256,6 +257,7 @@ CodePulse/
 │
 ├── client/
 │   └── src/
+        ├── assets/
 │       ├── components/
 │       ├── pages/
 │       ├── context/
@@ -268,7 +270,9 @@ CodePulse/
 │   │   ├── dashboardController.js
 │   │   ├── problemController.js
 │   │   ├── topicController.js
-│   │   └── studyPlanController.js
+        ├── goalController.js
+        ├── profileController.js
+│   │   └── aiController.js
 │   ├── middleware/
 │   ├── models/
 │   │   ├── User.js
@@ -499,7 +503,7 @@ Coming soon.
 * Google-linked accounts currently do not have a separate password-setting flow.
 * Automated backend test coverage has not yet been implemented.
 * Production OAuth callback and environment-specific URLs need to be configured for the deployed environment.
-* The dark theme is not currently included as a finalized UI feature and may be added/refined in a future update.
+* Dark mode is implemented and toggleable, but its color palette needs refinement — this will be polished after deployment.
 
 ---
 
@@ -533,6 +537,6 @@ B.Tech CSE, Chitkara University
 
 ## 22. License
 
-This project is currently developed as a portfolio and learning project.
+This project is licensed under the MIT License.
 
-See the [LICENSE](LICENSE) file for details.
+ See the [LICENSE](LICENSE) file for details.
