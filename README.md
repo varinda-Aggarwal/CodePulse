@@ -438,14 +438,105 @@ A ready-to-import Postman collection containing the CodePulse API endpoints is i
 
 The following screenshots showcase the main CodePulse features and user flows.
 
-- Landing Page
-- Dashboard
-- Topics
-- Problems
-- Daily Goal
-- AI Study Plan
-- Profile
-- Help & Support
+**1. Landing Page**
+
+![Landing Page](docs/screenshots/01-home-page.png)
+
+<br>
+
+**2. Landing Page – Feature View**
+
+![Landing Page Feature View](docs/screenshots/02-home-page.png)
+
+<br>
+
+**3. Login**
+
+![Login](docs/screenshots/03-login.png)
+
+<br>
+
+**4. Signup**
+
+![Signup](docs/screenshots/04-signup.png)
+
+<br>
+
+**5. Dashboard Overview**
+
+![Dashboard Overview](docs/screenshots/05-dashboard-overview.png)
+
+<br>
+
+**6. Dashboard Analytics**
+
+![Dashboard Analytics](docs/screenshots/06-dashboard-analytics.png)
+
+<br>
+
+**7. Topics**
+
+![Topics](docs/screenshots/07-topics.png)
+
+<br>
+
+**8. Add Problem**
+
+![Add Problem](docs/screenshots/08-add-problem.png)
+
+<br>
+
+**9. All Problems**
+
+![All Problems](docs/screenshots/09-all-problems.png)
+
+<br>
+
+**10. AI Study Plan**
+
+![AI Study Plan](docs/screenshots/10-ai-study-plan.png)
+
+<br>
+
+**11. Daily Goals**
+
+![Daily Goals](docs/screenshots/11-daily-goals.png)
+
+<br>
+
+**12. Profile**
+
+![Profile](docs/screenshots/12-profile.png)
+
+<br>
+
+**13. Profile Details**
+
+![Profile Details](docs/screenshots/13-profile-details.png)
+
+<br>
+
+**14. Contact Us**
+
+![Contact Us](docs/screenshots/14-contact-us.png)
+
+<br>
+
+**15. Report a Bug**
+
+![Report a Bug](docs/screenshots/15-report-bug.png)
+
+<br>
+
+**16. Bug Report Email**
+
+![Bug Report Email](docs/screenshots/16-bug-report-email.png)
+
+<br>
+
+**17. Password Reset Email**
+
+![Password Reset Email](docs/screenshots/17-password-reset-email.png)
 
 ### AI Study Plan Demo
 
