@@ -440,103 +440,103 @@ The following screenshots showcase the main CodePulse features and user flows.
 
 **1. Landing Page**
 
-![Landing Page](docs/screenshots/01-home-page.png)
+![Landing Page](docs/Screenshots/01-home-page.png)
 
 <br>
 
 **2. Landing Page – Feature View**
 
-![Landing Page Feature View](docs/screenshots/02-home-page.png)
+![Landing Page Feature View](docs/Screenshots/02-home-page.png)
 
 <br>
 
 **3. Login**
 
-![Login](docs/screenshots/03-login.png)
+![Login](docs/Screenshots/03-login.png)
 
 <br>
 
 **4. Signup**
 
-![Signup](docs/screenshots/04-signup.png)
+![Signup](docs/Screenshots/04-signup.png)
 
 <br>
 
 **5. Dashboard Overview**
 
-![Dashboard Overview](docs/screenshots/05-dashboard-overview.png)
+![Dashboard Overview](docs/Screenshots/05-dashboard-overview.png)
 
 <br>
 
 **6. Dashboard Analytics**
 
-![Dashboard Analytics](docs/screenshots/06-dashboard-analytics.png)
+![Dashboard Analytics](docs/Screenshots/06-dashboard-analytics.png)
 
 <br>
 
 **7. Topics**
 
-![Topics](docs/screenshots/07-topics.png)
+![Topics](docs/Screenshots/07-topics.png)
 
 <br>
 
 **8. Add Problem**
 
-![Add Problem](docs/screenshots/08-add-problem.png)
+![Add Problem](docs/Screenshots/08-add-problem.png)
 
 <br>
 
 **9. All Problems**
 
-![All Problems](docs/screenshots/09-all-problems.png)
+![All Problems](docs/Screenshots/09-all-problems.png)
 
 <br>
 
 **10. AI Study Plan**
 
-![AI Study Plan](docs/screenshots/10-ai-study-plan.png)
+![AI Study Plan](docs/Screenshots/10-ai-study-plan.png)
 
 <br>
 
 **11. Daily Goals**
 
-![Daily Goals](docs/screenshots/11-daily-goals.png)
+![Daily Goals](docs/Screenshots/11-daily-goals.png)
 
 <br>
 
 **12. Profile**
 
-![Profile](docs/screenshots/12-profile.png)
+![Profile](docs/Screenshots/12-profile.png)
 
 <br>
 
 **13. Profile Details**
 
-![Profile Details](docs/screenshots/13-profile-details.png)
+![Profile Details](docs/Screenshots/13-profile-details.png)
 
 <br>
 
 **14. Contact Us**
 
-![Contact Us](docs/screenshots/14-contact-us.png)
+![Contact Us](docs/Screenshots/14-contact-us.png)
 
 <br>
 
 **15. Report a Bug**
 
-![Report a Bug](docs/screenshots/15-report-bug.png)
+![Report a Bug](docs/Screenshots/15-report-bug.png)
 
 <br>
 
 **16. Bug Report Email**
 
-![Bug Report Email](docs/screenshots/16-bug-report-email.png)
+![Bug Report Email](docs/Screenshots/16-bug-report-email.png)
 
 <br>
 
 **17. Password Reset Email**
 
-![Password Reset Email](docs/screenshots/17-password-reset-email.png)
+![Password Reset Email](docs/Screenshots/17-password-reset-email.png)
 
 ### AI Study Plan Demo
 
