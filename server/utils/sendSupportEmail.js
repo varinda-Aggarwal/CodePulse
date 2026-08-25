@@ -5,19 +5,18 @@ const sendSupportEmail = async ({ type, name, email, subject, message, category,
         feature: '💡 New Feature Suggestion'
     };
 
-    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    const response = await fetch('https://api.mailersend.com/v1/email', {
         method: 'POST',
         headers: {
-            'accept': 'application/json',
-            'api-key': process.env.BREVO_API_KEY,
-            'content-type': 'application/json'
+            'Authorization': `Bearer ${process.env.MAILERSEND_API_KEY}`,
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            sender: { name: 'CodePulse Support', email: process.env.EMAIL_USER },
+            from: { email: process.env.MAILERSEND_SENDER_EMAIL, name: 'CodePulse Support' },
             to: [{ email: process.env.EMAIL_USER }],
-            replyTo: email ? { email } : undefined,
+            reply_to: email ? { email } : undefined,
             subject: `${typeLabels[type]}: ${subject}`,
-            htmlContent: `
+            html: `
                 <div style="font-family: Arial, sans-serif; padding: 20px;">
                     <h2>${typeLabels[type]}</h2>
                     ${name ? `<p><strong>From:</strong> ${name}</p>` : ''}

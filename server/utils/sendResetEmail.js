@@ -1,16 +1,15 @@
 const sendResetEmail = async (email, resetLink) => {
-    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    const response = await fetch('https://api.mailersend.com/v1/email', {
         method: 'POST',
         headers: {
-            'accept': 'application/json',
-            'api-key': process.env.BREVO_API_KEY,
-            'content-type': 'application/json'
+            'Authorization': `Bearer ${process.env.MAILERSEND_API_KEY}`,
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            sender: { name: 'CodePulse', email: process.env.EMAIL_USER },
+            from: { email: process.env.MAILERSEND_SENDER_EMAIL, name: 'CodePulse' },
             to: [{ email }],
             subject: 'Reset your CodePulse password',
-            htmlContent: `
+            html: `
                 <div style="font-family: Arial, sans-serif; padding: 20px;">
                     <h2>Reset Your Password</h2>
                     <p>Click the button below to set a new password. This link is valid for 15 minutes.</p>
