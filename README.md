@@ -2,7 +2,7 @@
 
 A full-stack MERN application for tracking Data Structures & Algorithms interview preparation — log problems, track topic mastery, set daily goals, and get AI-personalized study plans.
 
-> 🚀 **Live Demo:** Coming Soon
+> 🚀 **Live Demo:** [code-pulse-lime.vercel.app](https://code-pulse-lime.vercel.app)
 > 📄 **API Documentation:** [`docs/API-Documentation.pdf`](docs/API-Documentation.pdf)
 > 🧪 **Postman Collection:** [`docs/CodePulse-Postman-Collection.json`](docs/CodePulse-Postman-Collection.json)
 
@@ -206,7 +206,7 @@ Some of the main technical decisions and challenges addressed in CodePulse inclu
 | Authentication      | JWT, Passport.js, Google OAuth 2.0, bcrypt        |
 | AI                  | Google Gemini (`gemini-flash-latest`)             |
 | Image Storage       | Cloudinary                                        |
-| Email               | Nodemailer                                        |
+| Email               | MailerSend                                        |
 | Validation          | express-validator                                 |
 | Rate Limiting       | express-rate-limit                                |
 | API Testing         | Postman                                           |
@@ -244,7 +244,7 @@ Some of the main technical decisions and challenges addressed in CodePulse inclu
                     │ Google OAuth        │
                     │ Google Gemini       │
                     │ Cloudinary          │
-                    │ Nodemailer          │
+                    │ MailerSend          │
                     └─────────────────────┘
 
 The frontend communicates with external services through the Express backend. Credentials and API keys remain on the server side.
@@ -285,7 +285,7 @@ CodePulse/
 ├── docs/
 │   ├── API-Documentation.pdf
 │   ├── CodePulse-Postman-Collection.json
-│   └── screenshots/
+│   └── Screenshots/
 │
 ├── README.md
 ├── PRD.md
@@ -305,7 +305,7 @@ Make sure the following are installed/configured:
 * Google OAuth credentials
 * Google Gemini API key
 * Cloudinary account
-* Gmail account with an App Password for Nodemailer
+* MailerSend account with an API key
 
 ### Clone the Repository
 
@@ -346,8 +346,12 @@ CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 
-EMAIL_USER=your_email
-EMAIL_APP_PASSWORD=your_email_app_password
+EMAIL_USER=your_support_inbox_email
+
+MAILERSEND_API_KEY=your_mailersend_api_key
+MAILERSEND_SENDER_EMAIL=your_mailersend_sender_email
+
+FRONTEND_URL=http://localhost:3000
 
 GEMINI_API_KEY=your_gemini_api_key
 NODE_ENV=development
@@ -563,13 +567,13 @@ All 30 API endpoints have been manually tested using Postman.
 * Dashboard calculations
 * Daily goal behavior
 
-Final end-to-end testing will be performed against the deployed application. Automated backend testing using Jest and Supertest is planned as a future enhancement.
+End-to-end testing has been performed against the deployed application (Vercel frontend + Render backend), covering authentication (OTP signup, login, Google OAuth, password reset), CRUD flows, dashboard analytics, and AI study plan generation. Automated backend testing using Jest and Supertest is planned as a future enhancement.
 
 ---
 
 ## 17. Deployment
 
-The planned deployment architecture is:
+The deployment architecture is:
 
 | Layer    | Platform      |
 | -------- | ------------- |
@@ -577,15 +581,13 @@ The planned deployment architecture is:
 | Backend  | Render        |
 | Database | MongoDB Atlas |
 
-Deployment-specific environment variables will be configured separately on the respective platforms.
-
 ### Live Application
 
-Coming soon.
+[https://code-pulse-lime.vercel.app](https://code-pulse-lime.vercel.app)
 
 ### Backend API
 
-Coming soon.
+[https://codepulse-646c.onrender.com](https://codepulse-646c.onrender.com) — free-tier instance, may take 30–50 seconds to wake up after inactivity.
 
 ---
 
@@ -593,8 +595,8 @@ Coming soon.
 
 * Google-linked accounts currently do not have a separate password-setting flow.
 * Automated backend test coverage has not yet been implemented.
-* Production OAuth callback and environment-specific URLs need to be configured for the deployed environment.
-* Dark mode is implemented and toggleable, but its color palette needs refinement — this will be polished after deployment.
+* Email delivery (OTP, password reset, support tickets) currently runs on a MailerSend trial account, which can only send to the account owner's verified email until a custom domain is authenticated — a signup with a different email will not receive its OTP yet.
+* Dark mode is implemented and toggleable, but its color palette needs refinement.
 
 ---
 
