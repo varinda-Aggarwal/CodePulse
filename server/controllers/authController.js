@@ -147,7 +147,7 @@ const forgotPassword = async (req, res) => {
         const token = crypto.randomBytes(32).toString('hex');
         await PasswordReset.create({ email, token });
 
-        const resetLink = `http://localhost:3000/reset-password/${token}`;
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${token}`;
         await sendResetEmail(email, resetLink);
 
         res.status(200).json({ message: 'If that email exists, a reset link has been sent' });
