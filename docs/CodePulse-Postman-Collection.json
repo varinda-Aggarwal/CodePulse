@@ -332,7 +332,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Dynamic Programming\",\n  \"status\": \"Done\",\n  \"needsRevision\": true\n}"
+              "raw": "{\n  \"name\": \"Dynamic Programming\",\n  \"status\": \"Done\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/topics/{{topicId}}",
@@ -344,7 +344,7 @@
                 "{{topicId}}"
               ]
             },
-            "description": "Updates a topic (name and/or status). Setting status to 'Done' auto-sets completedAt; changing away from 'Done' clears it. Ownership is checked \u2014 401 if the topic doesn't belong to the logged-in user.\n\n**Errors:** 400 validation / duplicate name on rename, 401 not owner, 404 not found.\n\nneedsRevision is not accepted on creation (POST only reads name/status), but is settable here since PUT forwards the full body unfiltered to the database update."
+            "description": "Updates a topic (name and/or status). Setting status to 'Done' auto-sets completedAt; changing away from 'Done' clears it. Ownership is checked \u2014 401 if the topic doesn't belong to the logged-in user.\n\n**Errors:** 400 validation / duplicate name on rename, 401 not owner, 404 not found."
           },
           "response": []
         },
@@ -378,7 +378,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/problems?search=&difficulty=&topic=&page=1&limit=10",
+              "raw": "{{baseUrl}}/problems?search=&difficulty=&topic=&page=1&limit=50",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -404,7 +404,7 @@
                 },
                 {
                   "key": "limit",
-                  "value": "10"
+                  "value": "50"
                 }
               ]
             },
@@ -439,7 +439,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Longest Increasing Subsequence\",\n  \"link\": \"https://leetcode.com/problems/longest-increasing-subsequence/\",\n  \"difficulty\": \"Medium\",\n  \"status\": \"Solved\",\n  \"topic\": \"{{topicId}}\",\n  \"notes\": \"Classic DP problem\"\n}"
+              "raw": "{\n  \"name\": \"Longest Increasing Subsequence\",\n  \"link\": \"https://leetcode.com/problems/longest-increasing-subsequence/\",\n  \"difficulty\": \"Medium\",\n  \"status\": \"Solved\",\n  \"topic\": \"{{topicId}}\",\n  \"notes\": \"Classic DP problem\",\n  \"approach\": \"O(n^2) DP with binary search optimization to O(n log n)\",\n  \"timeComplexity\": \"O(n log n)\",\n  \"spaceComplexity\": \"O(n)\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/problems",
@@ -450,7 +450,7 @@
                 "problems"
               ]
             },
-            "description": "Creates a new problem under a topic. Duplicate check is by name OR link. Setting status to 'Solved' auto-sets dateSolved to now.\n\n**Errors:** 400 validation / duplicate name-or-link.\n\nNote: approach, timeComplexity, spaceComplexity, and needsRevision exist on the Problem model but are NOT accepted at creation \u2014 the controller only reads name, link, difficulty, topic, notes, and status here. Use Update Problem (PUT) to add those fields afterward."
+            "description": "Creates a new problem under a topic. Duplicate check is by name OR link. Setting status to 'Solved' auto-sets dateSolved to now.\n\n**Errors:** 400 validation / duplicate name-or-link."
           },
           "response": []
         },
@@ -466,7 +466,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": \"Solved\",\n  \"notes\": \"Revisited and solved cleanly\",\n  \"approach\": \"O(n^2) DP with binary search optimization to O(n log n)\",\n  \"timeComplexity\": \"O(n log n)\",\n  \"spaceComplexity\": \"O(n)\",\n  \"needsRevision\": true\n}"
+              "raw": "{\n  \"status\": \"Solved\",\n  \"notes\": \"Revisited and solved cleanly\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/problems/{{problemId}}",
@@ -478,7 +478,7 @@
                 "{{problemId}}"
               ]
             },
-            "description": "Updates a problem. Ownership checked. Duplicate check re-runs if name is changed. dateSolved is auto-managed on status transitions (set when moving to Solved, left as-is otherwise).\n\n**Errors:** 400 validation / duplicate on rename, 401 not owner, 404 not found.\n\nUnlike POST, this route forwards the entire request body directly to the database update (no field whitelist), so approach, timeComplexity, spaceComplexity, and needsRevision are only settable here."
+            "description": "Updates a problem. Ownership checked. Duplicate check re-runs if name is changed. dateSolved is auto-managed on status transitions (set when moving to Solved, left as-is otherwise).\n\n**Errors:** 400 validation / duplicate on rename, 401 not owner, 404 not found."
           },
           "response": []
         },
@@ -559,7 +559,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"target\": 5,\n  \"date\": \"2026-01-15\"\n}"
+              "raw": "{\n  \"target\": 5,\n  \"date\": \"2026-08-19\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/goals",
@@ -570,7 +570,7 @@
                 "goals"
               ]
             },
-            "description": "Sets (upserts) the target problem count for a given date. One goal document per user per date (unique compound index).\n\nNote: the date field is currently accepted but IGNORED by the controller \u2014 it always reads/writes against the server-computed today's date, regardless of what date is sent here."
+            "description": "Sets (upserts) the target problem count for a given date. One goal document per user per date (unique compound index)."
           },
           "response": []
         },
@@ -727,7 +727,7 @@
                 "contact"
               ]
             },
-            "description": "Submits a general contact message. name/email are taken from the authenticated user (req.user), never from the request body, so submissions can't be spoofed. Triggers an email notification via nodemailer."
+            "description": "Submits a general contact message. name/email are taken from the authenticated user (req.user), never from the request body, so submissions can't be spoofed. Triggers an email notification via MailerSend."
           },
           "response": []
         },
@@ -804,7 +804,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"weakTopics\": [\n    \"Dynamic Programming\",\n    \"Graphs\"\n  ],\n  \"totalDays\": 7,\n  \"regenerate\": false\n}"
+              "raw": "{\n  \"weakTopics\": [\n    \"Dynamic Programming\",\n    \"Graphs\"\n  ],\n  \"regenerate\": false\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/ai/study-plan",
@@ -816,7 +816,7 @@
                 "study-plan"
               ]
             },
-            "description": "Generates a personalized study plan via Gemini (gemini-flash-latest) based on the given weak topics. If a plan already exists for today and `regenerate` isn't set, the cached plan is returned. Max 2 regenerations per day.\n\n**Errors:** 400 weakTopics missing, 429 daily regeneration limit reached OR Gemini quota exhausted, 502 Gemini returned invalid/unparseable JSON.\n\n**Known issue (Aug 2026):** Google's Gemini Flash-tier models have been intermittently returning `503 Service Unavailable \u2014 This model is currently experiencing high demand` since Feb 2026, sometimes for hours at a stretch. This is a Google-side capacity issue, not a bug in this endpoint \u2014 verified: when it occurs, the backend correctly catches it and returns a clean error response rather than crashing. If you see a 503 with this message, the code is working as intended; just retry later.\n\nweakTopics is sourced from the weakTopics field returned by GET /api/dashboard \u2014 but that field returns an array of objects ({topic, masteryScore}), while this endpoint expects a plain array of topic name strings. Extract the topic field from each object before sending (e.g. dashboardResponse.weakTopics.map(t => t.topic)). This endpoint does not auto-fetch weak topics itself."
+            "description": "Generates a personalized study plan via Gemini (gemini-flash-latest) based on the given weak topics. If a plan already exists for today and `regenerate` isn't set, the cached plan is returned. Max 2 regenerations per day.\n\n**Errors:** 400 weakTopics missing, 429 daily regeneration limit reached OR Gemini quota exhausted, 502 Gemini returned invalid/unparseable JSON.\n\n**Known issue (Aug 2026):** Google's Gemini Flash-tier models have been intermittently returning `503 Service Unavailable \u2014 This model is currently experiencing high demand` since Feb 2026, sometimes for hours at a stretch. This is a Google-side capacity issue, not a bug in this endpoint \u2014 verified: when it occurs, the backend correctly catches it and returns a clean error response rather than crashing. If you see a 503 with this message, the code is working as intended; just retry later."
           },
           "response": []
         },
