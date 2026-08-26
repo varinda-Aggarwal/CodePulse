@@ -567,7 +567,7 @@ All 30 API endpoints have been manually tested using Postman.
 * Dashboard calculations
 * Daily goal behavior
 
-End-to-end testing has been performed against the deployed application (Vercel frontend + Render backend), covering authentication (OTP signup, login, Google OAuth, password reset), CRUD flows, dashboard analytics, and AI study plan generation. Automated backend testing using Jest and Supertest is planned as a future enhancement.
+End-to-end testing has been performed against the deployed application (Vercel frontend + Render backend), covering authentication (OTP signup, login, Google OAuth, password reset), CRUD flows, dashboard analytics, and AI study plan generation was also tested, but its availability may be affected by temporary Google Gemini service overload. Automated backend testing using Jest and Supertest is planned as a future enhancement.
 
 ---
 
