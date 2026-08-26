@@ -110,7 +110,7 @@ const Login = () => {
             </div>
 
             
-               <a href="http://localhost:5000/api/auth/google"
+            <a href={`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/auth/google`}
                 className="w-full flex items-center justify-center gap-2 bg-surface-bg hover:bg-surface-border border border-surface-border text-text font-semibold py-3 rounded-lg transition"
             >
                 <svg width="18" height="18" viewBox="0 0 18 18">
