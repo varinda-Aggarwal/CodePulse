@@ -77,6 +77,12 @@ const addProblem = async (req, res) => {
             dateSolved: (status || 'Solved') === 'Solved' ? new Date() : null
         });
 
+        // Auto-promote the topic from 'Not Started' to 'In Progress' once a problem is logged under it
+        await Topic.updateOne(
+            { _id: topic, user: req.user._id, status: 'Not Started' },
+            { status: 'In Progress' }
+        );
+
         res.status(201).json(problem);
     } catch (error) {
         res.status(500).json({ message: error.message });
