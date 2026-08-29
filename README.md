@@ -544,9 +544,9 @@ The following screenshots showcase the main CodePulse features and user flows.
 
 ### AI Study Plan Demo
 
-A short GIF demonstrating AI study-plan generation can be added here after final UI verification.
+The following video demonstrates the AI Study Plan generation flow, from identifying weak topics to generating a personalized study plan using Google Gemini.
 
-[AI Study Plan generation GIF]
+https://github.com/varinda-Aggarwal/CodePulse/raw/refs/heads/main/docs/ai-study-plan-demo.mp4
 
 ---
 
