@@ -1,3 +1,5 @@
+
+https://github.com/user-attachments/assets/58959673-3edf-4916-bc87-8a22b4413e70
 # CodePulse
 
 A full-stack MERN application for tracking Data Structures & Algorithms interview preparation — log problems, track topic mastery, set daily goals, and get AI-personalized study plans.
@@ -546,7 +548,7 @@ The following screenshots showcase the main CodePulse features and user flows.
 
 The following video demonstrates the AI Study Plan generation flow, from identifying weak topics to generating a personalized study plan using Google Gemini.
 
-https://github.com/varinda-Aggarwal/CodePulse/raw/refs/heads/main/docs/ai-study-plan-demo.mp4
+https://github.com/user-attachments/assets/a2ed1756-790c-48db-8c6c-83f30384401c
 
 ---
 
