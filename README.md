@@ -1,5 +1,3 @@
-
-https://github.com/user-attachments/assets/58959673-3edf-4916-bc87-8a22b4413e70
 # CodePulse
 
 A full-stack MERN application for tracking Data Structures & Algorithms interview preparation — log problems, track topic mastery, set daily goals, and get AI-personalized study plans.
