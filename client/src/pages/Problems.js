@@ -65,6 +65,10 @@ const Problems = () => {
     };
 
     const openAddModal = () => {
+        if (topics.length === 0) {
+            toast.error('Add a topic first before logging a problem');
+            return;
+        }
         setEditProblem(null);
         setFormData(emptyForm);
         setShowModal(true);
@@ -339,7 +343,9 @@ const Problems = () => {
                 </button>
                 <button
                     onClick={openAddModal}
-                    className="flex items-center justify-center gap-1.5 bg-brand hover:bg-brand-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"
+                    disabled={topics.length === 0}
+                    title={topics.length === 0 ? 'Add a topic first before logging a problem' : ''}
+                    className="flex items-center justify-center gap-1.5 bg-brand hover:bg-brand-hover disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"
                 >
                     <Plus size={16} /> Add Problem
                 </button>
@@ -350,7 +356,11 @@ const Problems = () => {
                 <div className={`${cardClass} p-12 flex flex-col items-center justify-center text-center`}>
                     <FileText size={40} className="text-text-muted mb-3" />
                     <p className="text-text font-bold text-lg mb-1">No Problems Yet</p>
-                    <p className="text-text-muted text-sm">Add your first problem to get started.</p>
+                    <p className="text-text-muted text-sm">
+                        {topics.length === 0
+                            ? 'Add a topic first, then log your first problem under it.'
+                            : 'Add your first problem to get started.'}
+                    </p>
                 </div>
             ) : (
                 <div className="flex flex-col gap-3">
