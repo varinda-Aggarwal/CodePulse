@@ -206,7 +206,7 @@ Some of the main technical decisions and challenges addressed in CodePulse inclu
 | Authentication      | JWT, Passport.js, Google OAuth 2.0, bcrypt        |
 | AI                  | Google Gemini (`gemini-flash-latest`)             |
 | Image Storage       | Cloudinary                                        |
-| Email               | MailerSend                                        |
+| Email               | Gmail API (OAuth2)                                |
 | Validation          | express-validator                                 |
 | Rate Limiting       | express-rate-limit                                |
 | API Testing         | Postman                                           |
@@ -244,7 +244,7 @@ Some of the main technical decisions and challenges addressed in CodePulse inclu
                     │ Google OAuth        │
                     │ Google Gemini       │
                     │ Cloudinary          │
-                    │ MailerSend          │
+                    │ Gmail API           │
                     └─────────────────────┘
 
 The frontend communicates with external services through the Express backend. Credentials and API keys remain on the server side.
@@ -305,7 +305,7 @@ Make sure the following are installed/configured:
 * Google OAuth credentials
 * Google Gemini API key
 * Cloudinary account
-* MailerSend account with an API key
+* Gmail API enabled on your Google Cloud project, with an OAuth2 refresh token for the sending account
 
 ### Clone the Repository
 
@@ -347,9 +347,7 @@ CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 
 EMAIL_USER=your_support_inbox_email
-
-MAILERSEND_API_KEY=your_mailersend_api_key
-MAILERSEND_SENDER_EMAIL=your_mailersend_sender_email
+GOOGLE_REFRESH_TOKEN=your_gmail_api_oauth_refresh_token
 
 FRONTEND_URL=http://localhost:3000
 
@@ -595,7 +593,7 @@ The deployment architecture is:
 
 * Google-linked accounts currently do not have a separate password-setting flow.
 * Automated backend test coverage has not yet been implemented.
-* Email delivery (OTP, password reset, support tickets) currently runs on a MailerSend trial account, which can only send to the account owner's verified email until a custom domain is authenticated — a signup with a different email will not receive its OTP yet.
+* Email delivery uses the Gmail API via OAuth2 on a Google Cloud OAuth app that is still in "Testing" mode (not yet verified by Google) — the refresh token may need periodic renewal until the app is published/verified.
 * Dark mode is implemented and toggleable, but its color palette needs refinement.
 
 ---
