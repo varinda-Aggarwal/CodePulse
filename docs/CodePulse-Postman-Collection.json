@@ -727,7 +727,7 @@
                 "contact"
               ]
             },
-            "description": "Submits a general contact message. name/email are taken from the authenticated user (req.user), never from the request body, so submissions can't be spoofed. Triggers an email notification via MailerSend."
+            "description": "Submits a general contact message. name/email are taken from the authenticated user (req.user), never from the request body, so submissions can't be spoofed. Triggers an email notification via the Gmail API (OAuth2)."
           },
           "response": []
         },
