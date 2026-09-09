@@ -216,14 +216,14 @@ const Topics = () => {
                         placeholder="Search topic..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full bg-[#EAECF1] text-text pl-9 pr-3 py-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition"
+                        className="w-full bg-[#EAECF1] dark:bg-[#122A42] text-text pl-9 pr-3 py-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition"
                     />
                 </div>
                 <div className="flex gap-3 min-w-0">
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="flex-1 min-w-0 md:flex-shrink-0 md:w-28 bg-[#EAECF1] text-text px-2 py-2 rounded-lg border border-surface-border text-sm tracking-tight"
+                        className="flex-1 min-w-0 md:flex-shrink-0 md:w-28 bg-[#EAECF1] dark:bg-[#122A42] text-text px-2 py-2 rounded-lg border border-surface-border text-sm tracking-tight"
                     >
                         <option value="all">All Status</option>
                         <option value="Not Started">Not Started</option>
@@ -234,7 +234,7 @@ const Topics = () => {
                     <select
                         value={sortBy}
                         onChange={(e) => handleSortChange(e.target.value)}
-                        className="flex-1 min-w-0 md:flex-shrink-0 md:w-28 bg-[#EAECF1] text-text px-2 py-2 rounded-lg border border-surface-border text-sm tracking-tight"
+                        className="flex-1 min-w-0 md:flex-shrink-0 md:w-28 bg-[#EAECF1] dark:bg-[#122A42] text-text px-2 py-2 rounded-lg border border-surface-border text-sm tracking-tight"
                     >
                         <option value="latest">Latest First</option>
                         <option value="oldest">Oldest First</option>
@@ -243,11 +243,11 @@ const Topics = () => {
                     </select>
                 </div>
                 <button
-                    onClick={handleSearch}
-                    className="bg-brand hover:bg-brand-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"
-                >
-                    Search
-                </button>
+    onClick={handleSearch}
+    className="bg-[#457B9D] dark:bg-[#225A82] hover:bg-[#3A6A89] dark:hover:bg-[#306E9B] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"
+>
+    Search
+</button>
                 </div>
 
                 <form onSubmit={handleAdd} className="xl:basis-[45%] xl:ml-4 flex flex-col md:flex-row gap-3 min-w-[220px] rounded-xl p-2 -m-2 focus-within:bg-brand/5 focus-within:ring-2 focus-within:ring-brand/20 transition">
@@ -258,14 +258,14 @@ const Topics = () => {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="Topic name..."
-                            className="w-full bg-[#EAECF1] text-text pl-9 pr-3 py-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition"
+                            className="w-full bg-[#EAECF1] dark:bg-[#122A42] text-text pl-9 pr-3 py-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition"
                             required
                         />
                     </div>
                     <select
                         value={status}
                         onChange={(e) => setStatus(e.target.value)}
-                        className="bg-[#EAECF1] text-text px-2 py-2 rounded-lg border border-surface-border text-sm tracking-tight w-28 flex-shrink-0"
+                        className="bg-[#EAECF1] dark:bg-[#122A42] text-text px-2 py-2 rounded-lg border border-surface-border text-sm tracking-tight w-28 flex-shrink-0"
                     >
                         <option>Not Started</option>
                         <option>In Progress</option>
@@ -273,9 +273,9 @@ const Topics = () => {
                     </select>
                     <button
                         type="submit"
-                        className="bg-brand hover:bg-brand-hover text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"
+                        className="bg-[#457B9D] dark:bg-[#225A82] hover:bg-[#3A6A89] dark:hover:bg-[#306E9B] text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"
                     >
-                        Add
+                    Add
                     </button>
                 </form>
             </div>
@@ -308,7 +308,7 @@ const Topics = () => {
                                                         type="text"
                                                         value={editName}
                                                         onChange={(e) => setEditName(e.target.value)}
-                                                        className="bg-[#EAECF1] text-text px-2 py-1 rounded-lg border border-surface-border focus:outline-none focus:border-brand text-sm w-full"
+                                                        className="bg-[#EAECF1] dark:bg-[#122A42] text-text px-2 py-1 rounded-lg border border-surface-border focus:outline-none focus:border-brand text-sm w-full"
                                                         autoFocus
                                                     />
                                                     <button onClick={() => saveEdit(topic._id)} className="text-success hover:opacity-70 flex-shrink-0">
@@ -338,11 +338,11 @@ const Topics = () => {
                                     </div>
                                     <select
                                         value={topic.status}
-                                        onChange={(e) => handleStatusChange(topic._id, e.target.value)}
+                                        onChange={(e) => handleStatusChange(topic._id, e.target.value, s.solved)}
                                         className={`px-2.5 py-1 rounded-full text-xs font-semibold border-none flex-shrink-0
                                             ${topic.status === 'Done' ? 'bg-success-light text-success-text' :
                                               topic.status === 'In Progress' ? 'bg-warning-light text-warning-text' :
-                                              'bg-[#EAECF1] text-text-muted'}`}
+                                              'bg-[#EAECF1] dark:bg-[#122A42] text-text-muted'}`}
                                     >
                                         <option>Not Started</option>
                                         <option>In Progress</option>
@@ -352,11 +352,11 @@ const Topics = () => {
 
                                 {/* Stats */}
                                 <div className="grid grid-cols-2 gap-3 mb-4">
-                                    <div className="bg-[#EAECF1] rounded-lg p-3 flex flex-col items-center text-center">
+                                    <div className="bg-[#EAECF1] dark:bg-[#122A42] rounded-lg p-3 flex flex-col items-center text-center">
                                         <span className="text-text-muted text-[11px]">Problems</span>
                                         <span className="text-text font-bold text-lg">{s.count}</span>
                                     </div>
-                                    <div className="bg-[#EAECF1] rounded-lg p-3 flex flex-col items-center text-center">
+                                    <div className="bg-[#EAECF1] dark:bg-[#122A42] rounded-lg p-3 flex flex-col items-center text-center">
                                         <span className="text-text-muted text-[11px]">Remaining</span>
                                         <span className="text-warning font-bold text-lg">{s.remaining}</span>
                                     </div>
@@ -367,7 +367,7 @@ const Topics = () => {
                                         <span className="text-text-muted text-xs">Completion</span>
                                         <span className="text-brand text-xs font-semibold">{completion}%</span>
                                     </div>
-                                    <div className="w-full bg-[#EAECF1] rounded-full h-2 overflow-hidden">
+                                    <div className="w-full bg-[#EAECF1] dark:bg-[#122A42] rounded-full h-2 overflow-hidden">
                                         <div
                                             className="bg-brand h-full rounded-full transition-all duration-500"
                                             style={{ width: `${completion}%` }}
@@ -396,7 +396,7 @@ const Topics = () => {
                                         onClick={() => handleRevision(topic._id, topic.needsRevision, s.solved)}
                                         disabled={!topic.needsRevision && s.solved === 0}
                                         title={!topic.needsRevision && s.solved === 0 ? 'Only topics with a solved problem can be marked for revision' : 'Toggle revision'}
-                                        className={`p-2.5 rounded-lg transition ${topic.needsRevision ? 'text-warning bg-warning-light' : s.solved === 0 ? 'text-text-muted/30 cursor-not-allowed' : 'text-text-muted hover:bg-[#EAECF1]'}`}
+                                        className={`p-2.5 rounded-lg transition ${topic.needsRevision ? 'text-warning bg-warning-light' : s.solved === 0 ? 'text-text-muted/30 cursor-not-allowed' : 'text-text-muted hover:bg-[#EAECF1] dark:bg-[#122A42]'}`}
                                     >
                                         <RotateCcw size={18} />
                                     </button>
