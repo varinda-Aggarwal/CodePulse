@@ -236,7 +236,7 @@ const Problems = () => {
                         <h3 className="text-text font-semibold mb-1">Notes</h3>
                         <div className="flex items-start justify-between gap-3 bg-surface-bg p-3 rounded-lg">
                             {selectedProblem.notes ? (
-                                <p className="text-text-muted whitespace-pre-wrap flex-1">{selectedProblem.notes}</p>
+                                <p className="text-text whitespace-pre-wrap flex-1">{selectedProblem.notes}</p>
                             ) : (
                                 <p className="text-text-muted italic flex-1">No notes yet.</p>
                             )}
@@ -312,7 +312,7 @@ const Problems = () => {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                        className="w-full bg-[#EAECF1] text-text pl-9 pr-3 py-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition"
+                        className="w-full bg-[#EAECF1] dark:bg-[#122A42] text-text pl-9 pr-3 py-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition"
                     />
                 </div>
                 <div className="flex gap-3 min-w-0">
@@ -337,7 +337,7 @@ const Problems = () => {
                 </div>
                 <button
                     onClick={handleSearch}
-                    className="bg-[#E0E3EB] hover:bg-[#CDD1DE] text-text px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"
+                    className="bg-[#E0E3EB] dark:bg-[#1E3A56] hover:bg-[#CDD1DE] dark:hover:bg-[#28486A] text-text px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"
                 >
                     Search
                 </button>
@@ -345,7 +345,7 @@ const Problems = () => {
                     onClick={openAddModal}
                     disabled={topics.length === 0}
                     title={topics.length === 0 ? 'Add a topic first before logging a problem' : ''}
-                    className="flex items-center justify-center gap-1.5 bg-brand hover:bg-brand-hover disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brand text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"
+                    className="flex items-center justify-center gap-1.5 bg-[#457B9D] dark:bg-[#225A82] hover:bg-[#3A6A89] dark:hover:bg-[#306E9B] disabled:opacity-40 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition whitespace-nowrap"
                 >
                     <Plus size={16} /> Add Problem
                 </button>
@@ -401,14 +401,14 @@ const Problems = () => {
                                             target="_blank"
                                             rel="noreferrer"
                                             onClick={(e) => e.stopPropagation()}
-                                            className="flex items-center gap-1 text-brand hover:underline text-xs font-bold bg-surface-bg px-2 py-1.5 rounded-lg"
+                                            className="flex items-center gap-1 text-brand hover:underline text-xs font-bold bg-surface-bg dark:bg-[#0E2036] px-2 py-1.5 rounded-lg border border-transparent dark:border-[#2A4E6E]"
                                         >
                                             <ExternalLink size={12} /> Open Link
                                         </a>
                                     )}
                                     <button
                                         onClick={(e) => { e.stopPropagation(); openNotesModal(problem); }}
-                                        className="flex items-center gap-1 text-text-muted hover:text-brand text-xs font-bold bg-surface-bg px-2 py-1.5 rounded-lg"
+                                        className="flex items-center gap-1 text-text-muted hover:text-brand text-xs font-bold bg-surface-bg dark:bg-[#0E2036] px-2 py-1.5 rounded-lg border border-transparent dark:border-[#2A4E6E]"
                                     >
                                         <StickyNote size={12} /> Notes
                                     </button>
@@ -462,7 +462,7 @@ const ProblemFormModal = ({ formData, setFormData, topics, isEdit, onSubmit, onC
                 </div>
                 <textarea placeholder="Additional notes" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} className="w-full bg-surface-bg text-text p-3 rounded-lg border border-surface-border" rows={3} />
                 <div className="flex gap-3 pt-2">
-                    <button type="submit" className="flex-1 bg-brand hover:bg-brand-hover text-white py-3 rounded-lg font-semibold">
+                    <button type="submit" className="flex-1 bg-[#225A82] hover:bg-[#306E9B] text-white py-3 rounded-lg font-semibold">
                         {isEdit ? 'Update Problem' : 'Add Problem'}
                     </button>
                     <button type="button" onClick={onClose} className="flex-1 bg-surface-bg hover:bg-surface-border text-text py-3 rounded-lg font-semibold">

@@ -89,7 +89,7 @@ const Login = () => {
                         />
                         Remember Me
                     </label>
-                    <Link to="/forgot-password" className="text-brand hover:underline text-sm font-medium">
+                    <Link to="/forgot-password" className="text-[#7EB6DE] hover:text-[#9CC9E8] hover:underline text-sm font-medium">
                         Forgot Password?
                     </Link>
                 </div>
@@ -97,9 +97,9 @@ const Login = () => {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-brand hover:bg-brand-hover disabled:opacity-60 text-white font-semibold py-3 rounded-lg transition"
-                >
-                    {loading ? 'Logging in...' : 'Sign In'}
+                    className="w-full bg-[#5A94C9] hover:bg-[#6FA5D6] disabled:opacity-60 text-white font-semibold py-3 rounded-lg transition"
+                    >
+                {loading ? 'Logging in...' : 'Sign In'}
                 </button>
             </form>
 
@@ -124,7 +124,7 @@ const Login = () => {
 
             <p className="text-text-muted text-center text-sm mt-5">
                 Don't have an account?{' '}
-                <Link to="/register" className="text-brand hover:underline font-semibold">Create Account</Link>
+                <Link to="/register" className="text-[#7EB6DE] hover:text-[#9CC9E8] hover:underline font-semibold">Create Account</Link>
             </p>
         </AuthLayout>
     );

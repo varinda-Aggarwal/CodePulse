@@ -219,9 +219,9 @@ const Register = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-brand hover:bg-brand-hover disabled:opacity-60 text-white font-semibold py-2.5 rounded-lg transition text-sm"
+                        className="w-full bg-[#5A94C9] hover:bg-[#6FA5D6] disabled:opacity-60 text-white font-semibold py-2.5 rounded-lg transition text-sm"
                     >
-                        {loading ? 'Sending OTP...' : 'Create Account'}
+                    {loading ? 'Sending OTP...' : 'Create Account'}
                     </button>
                 </form>
             ) : (
@@ -241,10 +241,10 @@ const Register = () => {
                             required
                         />
                     </div>
-                    <button
+                   <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-brand hover:bg-brand-hover disabled:opacity-60 text-white font-semibold py-2.5 rounded-lg transition text-sm mb-2"
+                        className="w-full bg-[#5A94C9] hover:bg-[#6FA5D6] disabled:opacity-60 text-white font-semibold py-2.5 rounded-lg transition text-sm mb-2"
                     >
                         {loading ? 'Verifying...' : 'Verify & Create Account'}
                     </button>
@@ -269,7 +269,7 @@ const Register = () => {
             {step === 'form' && (
                 <p className="text-text-muted text-center text-sm mt-3">
                     Already have an account?{' '}
-                    <Link to="/login" className="text-brand hover:underline font-semibold">Sign In</Link>
+                    <Link to="/login" className="text-[#7EB6DE] hover:text-[#9CC9E8] hover:underline font-semibold">Sign In</Link>
                 </p>
             )}
         </AuthLayout>

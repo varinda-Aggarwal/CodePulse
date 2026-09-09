@@ -8,7 +8,7 @@ import {
     BookOpen, Layers, CheckCircle2, Target, RotateCcw,
     Mail, AtSign, BadgeCheck, Trophy
 } from 'lucide-react';
-
+import { useTheme } from '../context/ThemeContext';
 const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <circle cx="50" cy="50" r="50" fill="#6b7280"/>
@@ -55,6 +55,7 @@ const getCroppedImageFile = (imageSrc, croppedAreaPixels) => {
 
 const Profile = () => {
     const { updateUser } = useAuth();
+    const { theme } = useTheme();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [firstName, setFirstName] = useState('');
@@ -451,10 +452,10 @@ const Profile = () => {
                         <label className="block text-text-muted text-sm mb-2">Password</label>
                         <p
                             className="text-text text-lg tracking-widest inline-block px-3 py-1.5 rounded-lg mb-2"
-                            style={{ backgroundColor: '#FAFBFC' }}
+                            style={{ backgroundColor: theme === 'dark' ? '#0E2036' : '#FAFBFC' }}
                         >
-                            ••••••••••••
-                        </p>
+                        ••••••••••••
+                    </p>
                         <p className="text-text-muted text-xs">
                             Last Updated: {new Date(profile?.joinedDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </p>

@@ -8,9 +8,10 @@ import {
     CheckCircle2, Code2, RotateCcw
 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-
+import { useTheme } from '../context/ThemeContext';
 const Dashboard = () => {
     const { user } = useAuth();
+    const { theme } = useTheme();
     const [stats, setStats] = useState(null);
     const [goalData, setGoalData] = useState(null);
     const [recentProblems, setRecentProblems] = useState([]);
@@ -131,7 +132,7 @@ const Dashboard = () => {
     if (loading) return <div className="text-text text-center mt-10">Loading...</div>;
 
     const statCards = [
-        { label: 'Topics', value: stats?.topics?.totalTopics || 0, color: 'text-[#3F435A]', icon: BookOpen, iconColor: 'text-[#3F435A]', subtitle: `+${stats?.topicsThisWeek || 0} this week` },
+        { label: 'Topics', value: stats?.topics?.totalTopics || 0, color: 'text-[#3F435A] dark:text-[#8FA3B8]', icon: BookOpen, iconColor: 'text-[#3F435A] dark:text-[#8FA3B8]', subtitle: `+${stats?.topicsThisWeek || 0} this week` },
         { label: 'Problems', value: stats?.problems?.totalProblems || 0, color: 'text-[#5986D9]', icon: Code2, iconColor: 'text-[#5986D9]', subtitle: `+${stats?.problemsThisWeek || 0} this week` },
         { label: 'Solved', value: stats?.problems?.solvedProblems || 0, color: 'text-[#90AA55]', icon: CheckCircle2, iconColor: 'text-[#90AA55]', subtitle: stats?.problems?.totalProblems > 0 ? `${Math.round((stats.problems.solvedProblems / stats.problems.totalProblems) * 100)}% of total` : 'No problems yet' },
         { label: 'Weak', value: stats?.weakTopics?.length || 0, color: 'text-[#C65A5A]', icon: AlertTriangle, iconColor: 'text-[#C65A5A]', subtitle: stats?.weakTopics?.length > 0 ? 'Needs revision' : 'None right now' },
@@ -246,7 +247,7 @@ const Dashboard = () => {
                                 <XAxis dataKey="topic" stroke="#8A8580" />
                                 <YAxis allowDecimals={false} stroke="#8A8580" />
                                 <Tooltip
-                                    cursor={{ fill: '#F5F8FC' }}
+                                    cursor={{ fill: theme === 'dark' ? 'rgba(255,255,255,0.06)' : '#F5F8FC' }}
                                     content={({ active, payload, label }) => {
                                         if (!active || !payload || !payload.length) return null;
                                         return (
@@ -266,7 +267,7 @@ const Dashboard = () => {
                                         );
                                     }}
                                 />
-                                <Bar dataKey="count" fill="#204E79" radius={[10, 10, 0, 0]} />
+<Bar dataKey="count" fill={theme === 'dark' ? '#3E6E96' : '#204E79'} radius={[10, 10, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     ) : (
@@ -338,7 +339,7 @@ const Dashboard = () => {
                                 <XAxis dataKey="day" stroke="#8A8580" fontSize={12} />
                                 <YAxis allowDecimals={false} stroke="#8A8580" fontSize={12} />
                                 <Tooltip
-                                    cursor={{ fill: '#F5F8FC' }}
+                                    cursor={{ fill: theme === 'dark' ? 'rgba(255,255,255,0.06)' : '#F5F8FC' }}
                                     content={({ active, payload, label }) => {
                                         if (!active || !payload || !payload.length) return null;
                                         const achieved = payload.find(p => p.dataKey === 'achieved')?.value ?? 0;
@@ -364,7 +365,7 @@ const Dashboard = () => {
                                     }}
                                 />
                                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                                <Bar dataKey="target" name="Target" fill="#367096" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey="target" name="Target" fill={theme === 'dark' ? '#4A7FAD' : '#367096'} radius={[4, 4, 0, 0]} />
                                 <Bar dataKey="achieved" name="Achieved" radius={[4, 4, 0, 0]}>
                                     {goalHistory.map((entry, index) => (
                                         <Cell key={index} fill={entry.achievedColor} />

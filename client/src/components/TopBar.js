@@ -35,7 +35,7 @@ const TopBar = ({ onMenuClick }) => {
     }, []);
 
     return (
-        <div className="flex justify-between items-center bg-[#D8E3F3] px-4 sm:px-6 lg:px-8 py-3 sm:py-4 border-b border-black/5">
+        <div className="flex justify-between items-center bg-[#D8E3F3] dark:bg-[#142F49] px-4 sm:px-6 lg:px-8 py-3 sm:py-4 border-b border-black/5">
             {/* Left: hamburger (mobile/tablet only) + greeting */}
             <div className="flex items-center gap-3 min-w-0">
                 <button
@@ -58,7 +58,7 @@ const TopBar = ({ onMenuClick }) => {
                 <div className="relative" ref={notifRef}>
                     <button
                         onClick={() => setNotifOpen((prev) => !prev)}
-                        className="relative flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-full bg-white text-warning-text text-xs font-semibold shadow-sm hover:bg-[#8094B3]/20 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm transition-all duration-200"
+                        className="relative flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-full bg-white dark:bg-[#24466A] text-warning-text text-xs font-semibold shadow-sm hover:bg-[#8094B3]/20 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm transition-all duration-200"
                     >
                         <Bell size={14} />
                         <span className="hidden sm:inline">0 alerts</span>
@@ -74,7 +74,7 @@ const TopBar = ({ onMenuClick }) => {
 
                 <button
                     onClick={toggleTheme}
-                    className="p-2.5 rounded-full bg-white text-text-muted hover:text-text hover:bg-[#8094B3]/20 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-110 active:translate-y-0 active:scale-100 transition-all duration-200"
+                    className="p-2.5 rounded-full bg-white dark:bg-[#24466A] text-text-muted hover:text-text hover:bg-[#8094B3]/20 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-110 active:translate-y-0 active:scale-100 transition-all duration-200"
                     aria-label="Toggle theme"
                 >
                     {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
@@ -82,7 +82,7 @@ const TopBar = ({ onMenuClick }) => {
 
                 <button
                     onClick={handleLogout}
-                    className="p-2.5 rounded-full bg-white text-danger hover:bg-danger/10 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-110 active:translate-y-0 active:scale-100 transition-all duration-200"
+                    className="p-2.5 rounded-full bg-white dark:bg-[#24466A] text-danger hover:bg-danger/10 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:scale-110 active:translate-y-0 active:scale-100 transition-all duration-200"
                     aria-label="Logout"
                     title="Logout"
                 >

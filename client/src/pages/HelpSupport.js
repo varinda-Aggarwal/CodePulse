@@ -8,7 +8,7 @@ import {
     ChevronRight, ChevronDown, Mail, Clock, Lightbulb, X, Send, Paperclip
 } from 'lucide-react';
 import logoIcon from '../assets/branding/logo-icon.png';
-
+import { useTheme } from '../context/ThemeContext';
 const GithubIcon = ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.34.96.1-.75.4-1.25.73-1.54-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.73 0c2.18-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.74.8 1.18 1.83 1.18 3.09 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.15 0 1.55-.01 2.8-.01 3.18 0 .3.2.66.79.55A10.52 10.52 0 0 0 23.5 12c0-6.35-5.15-11.5-11.5-11.5z" />
@@ -65,6 +65,7 @@ const Modal = ({ title, onClose, children }) => (
 
 const HelpSupport = () => {
     const navigate = useNavigate();
+    const { theme } = useTheme();
     const { user, token } = useAuth();
     const cardClass = "bg-surface-card border border-surface-border rounded-xl shadow-sm hover:shadow-md hover:border-[#AECDEA] hover:-translate-y-0.5 transition-all duration-200";
     const inputClass = "w-full bg-surface-bg text-text p-2.5 rounded-lg border border-surface-border focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition text-sm";
@@ -246,7 +247,7 @@ const HelpSupport = () => {
 
             {/* Footer — matches Landing page's "Get in Touch" footer, light-themed to match this page's topbar */}
             <footer className="mt-8">
-                <div className="rounded-2xl p-6 md:p-10" style={{ backgroundColor: '#D8E3F3' }}>
+            <div className="rounded-2xl p-6 md:p-10" style={{ backgroundColor: theme === 'dark' ? '#122A42' : '#D8E3F3' }}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center pb-8 border-b border-black/10">
                         <div>
                             <h2 className="text-2xl font-bold text-text mb-3">Get in Touch</h2>
@@ -261,7 +262,7 @@ const HelpSupport = () => {
                         </div>
 
                         <div className="grid grid-cols-1 gap-4">
-                            <button onClick={() => openModalOrRequireLogin('contact')} className="bg-white border border-surface-border rounded-xl p-5 text-left hover:-translate-y-0.5 hover:shadow-md transition">
+                            <button onClick={() => openModalOrRequireLogin('contact')} className="bg-white dark:bg-[#0E2036] border border-surface-border rounded-xl p-5 text-left hover:-translate-y-0.5 hover:shadow-md transition">
                                 <div className="w-9 h-9 rounded-lg bg-brand/10 flex items-center justify-center mb-3 text-brand"><Mail size={17} /></div>
                                 <p className="text-text-muted text-[10px] font-bold uppercase tracking-wide mb-1">Email</p>
                                 <p className="text-text text-sm font-semibold">support.codepulse@gmail.com</p>

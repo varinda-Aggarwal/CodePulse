@@ -5,7 +5,7 @@ import {
     Brain, Sparkles, Calendar, CheckCircle2, Circle,
     BookOpen, Target, ChevronRight
 } from 'lucide-react';
-
+import { useTheme } from '../context/ThemeContext';
 const AIStudyPlan = () => {
     const [weakTopics, setWeakTopics] = useState([]);
     const [loadingWeak, setLoadingWeak] = useState(true);
@@ -17,7 +17,7 @@ const AIStudyPlan = () => {
     const [viewingDate, setViewingDate] = useState(null);
     const [generationCount, setGenerationCount] = useState(0);
     const [checkedTasks, setCheckedTasks] = useState({});
-
+    const { theme } = useTheme();
     useEffect(() => {
         fetchWeakTopics();
         fetchTodayPlan();
@@ -184,25 +184,33 @@ const AIStudyPlan = () => {
 
                 <p className="text-text-muted text-xs font-semibold uppercase tracking-wide mb-1.5">Duration</p>
                 <div className="flex flex-wrap items-center gap-2 mb-3">
-                    {[3, 7, 14].map((d) => (
-                        <button
-                            key={d}
-                            type="button"
-                            onClick={() => setTotalDays(d)}
-                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors
-                                ${totalDays === d ? 'border-brand bg-brand/5' : 'border-surface-border bg-transparent'}`}
+                    {[3, 7, 14].map((d) => {
+                        const isDark = theme === 'dark';
+                        const selected = totalDays === d;
+                    return (
+                    <button
+                        key={d}
+                        type="button"
+                        onClick={() => setTotalDays(d)}
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors
+                        ${selected
+                            ? (isDark ? 'border-white bg-[#5A94C9] shadow-md' : 'border-brand bg-brand/5')
+                            : (isDark ? 'border-[#1A3854] bg-[#1A3854]' : 'border-surface-border bg-transparent')}`}
                         >
-                            <span
-                                className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center
-                                    ${totalDays === d ? 'border-brand' : 'border-text-muted/40'}`}
-                            >
-                                {totalDays === d && <span className="w-1.5 h-1.5 rounded-full bg-brand" />}
-                            </span>
-                            <span className={`text-sm font-medium ${totalDays === d ? 'text-brand' : 'text-text-muted'}`}>
-                                {d} Days
-                            </span>
-                        </button>
-                    ))}
+                    <span
+                        className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center
+                        ${selected
+                            ? (isDark ? 'border-white' : 'border-brand')
+                            : (isDark ? 'border-white/60' : 'border-text-muted/40')}`}
+                        >
+                        {selected && <span className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-white' : 'bg-brand'}`} />}
+                    </span>
+                    <span className={`text-sm font-semibold ${selected ? (isDark ? 'text-white' : 'text-brand') : (isDark ? 'text-white/85' : 'text-text-muted')}`}>
+                        {d} Days
+                    </span>
+                </button>
+                );
+            })}
                 </div>
 
                 <div className="flex justify-end">
@@ -378,7 +386,7 @@ const AIStudyPlan = () => {
                                     </div>
                                     <button
                                         onClick={() => handleViewPastPlan(h.date)}
-                                        className="flex items-center gap-1 text-brand text-xs font-semibold hover:underline shrink-0"
+                                        className="flex items-center gap-1 text-[#7EB6DE] hover:text-[#9CC9E8] text-xs font-semibold hover:underline shrink-0"
                                     >
                                         View <ChevronRight size={12} />
                                     </button>

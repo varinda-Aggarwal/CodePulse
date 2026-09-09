@@ -264,7 +264,8 @@ const AUTH_LAYOUT_CSS = `
     min-height: 100vh;
     display: flex;
     align-items: center;
-    background: #FDFEFF;
+    background: var(--cp-panel-bg, #FDFEFF);
+    background: var(--cp-panel-gradient, var(--cp-panel-bg, #FDFEFF));
     padding: 4.5rem 1.75rem 3rem;
 }
 
@@ -286,7 +287,7 @@ const AUTH_LAYOUT_CSS = `
     gap: 6px;
     border: 0;
     background: transparent;
-    color: #0F172A;
+    color: var(--cp-panel-text, #0F172A);
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
@@ -303,7 +304,7 @@ const AUTH_LAYOUT_CSS = `
     gap: 6px;
     border: 0;
     background: transparent;
-    color: #0F172A;
+    color: var(--cp-panel-text, #0F172A);
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
@@ -369,7 +370,7 @@ const AUTH_LAYOUT_CSS = `
         transform: translate(-50%, -50%);
         border-radius: 999px;
         border: 2px solid rgba(87, 216, 255, 0.95);
-        background: #FDFEFF;
+        background: var(--cp-panel-bg, #FDFEFF);
         box-shadow:
             0 0 0 7px rgba(88,214,255,.10),
             0 0 18px rgba(88,214,255,.45);
@@ -591,8 +592,14 @@ const AuthLayout = ({
 }) => {
     const { theme, toggleTheme } = useTheme();
     const navigate = useNavigate();
+    const panelStyle = theme === 'dark'
+    ? {
+        '--cp-panel-text': '#EDF2F4',
+        '--cp-panel-gradient': 'linear-gradient(135deg, #3A2E7A 0%, #2B2260 40%, #16324F 100%)'
+      }
+    : { '--cp-panel-bg': '#FDFEFF', '--cp-panel-text': '#0F172A' };
     return (
-        <div className="codepulse-auth-shell">
+        <div className="codepulse-auth-shell" style={panelStyle}>
             <style>{AUTH_LAYOUT_CSS}</style>
             {showCenterDivider && <div className="cp-center-divider" />}
             <AuthIllustration />

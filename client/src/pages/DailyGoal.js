@@ -5,7 +5,7 @@ import {
     Target, TrendingUp, Calendar, ChevronLeft, ChevronRight,
     CheckCircle2, XCircle, Circle, BarChart3
 } from 'lucide-react';
-
+import { useTheme } from '../context/ThemeContext';
 const DailyGoal = () => {
     const [goal, setGoal] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -14,7 +14,7 @@ const DailyGoal = () => {
     const [viewDate, setViewDate] = useState(new Date());
     const [history, setHistory] = useState([]);
     const [loadingHistory, setLoadingHistory] = useState(false);
-
+    const { theme } = useTheme();
     useEffect(() => {
         fetchGoal();
     }, []);
@@ -222,12 +222,13 @@ const DailyGoal = () => {
                                 const isAchieved = hasTarget && entry.achieved >= entry.target;
                                 const isMissed = hasTarget && entry.achieved < entry.target;
 
-                                let bgColor = '#EEF2F7';
-                                let hoverColor = '#E3E9F1';
-                                if (isToday) { bgColor = '#DBEAFE'; hoverColor = '#b3cbeb'; }
-                                else if (isAchieved) { bgColor = '#DCFCE7'; hoverColor = '#CFF7DA'; }
-                                else if (isMissed) { bgColor = '#FEF9C3'; hoverColor = '#FDF4B0'; }
-                                else if (isFuture) { bgColor = '#EEF2F7'; hoverColor = '#E3E9F1'; }
+                                const isDark = theme === 'dark';
+                                let bgColor = isDark ? '#122A42' : '#EEF2F7';
+                                let hoverColor = isDark ? '#1A3A56' : '#E3E9F1';
+                                if (isToday) { bgColor = isDark ? '#1E4870' : '#DBEAFE'; hoverColor = isDark ? '#285A88' : '#b3cbeb'; }
+                                else if (isAchieved) { bgColor = isDark ? '#2A5237' : '#DCFCE7'; hoverColor = isDark ? '#356544' : '#CFF7DA'; }
+                                else if (isMissed) { bgColor = isDark ? '#5A5420' : '#FEF9C3'; hoverColor = isDark ? '#6B6428' : '#FDF4B0'; }
+                                else if (isFuture) { bgColor = isDark ? '#122A42' : '#EEF2F7'; hoverColor = isDark ? '#1A3A56' : '#E3E9F1'; }
 
                                 return (
                                     <div
